@@ -7,7 +7,7 @@
 
 ## 📋 Project Overview & SRS Alignment
 
-Voyentra is an enterprise multi-tenant corporate travel, expense, and spend management platform that streamlines the end-to-end business travel lifecycle from request to accounting reconciliation:
+Voyentra is an enterprise multi-tenant corporate travel, expense, and spend management platform that streamlines the end-to-end business travel lifecycle from search to accounting reconciliation:
 
 ```
 Employee Travel Search & Request 
@@ -22,6 +22,9 @@ Manager Approval Workflow (Multi-Tier Approval Engine with Audit Reasons)
 Ticket & Reservation Management (PNR Issuance & Corporate Card Settlement)
        │
        ▼
+Digital Boarding Pass & Itinerary Voucher Generator (Aztec/QR Codes & PDF)
+       │
+       ▼
 Duty of Care & Traveler Safety (Live Geo-Tracking, Risk Intel, Emergency SOS)
        │
        ▼
@@ -32,6 +35,9 @@ Multi-Currency Financial Ledger & Hard Cost Center Budget Enforcement (FR-209)
        │
        ▼
 1-Click Accounting Export Engine (QuickBooks, Xero, NetSuite, GL Journal CSVs)
+       │
+       ▼
+Super Admin Multi-Tenant Governance & CSV Employee Onboarding (SRS Sec 17 & 21)
 ```
 
 ---
@@ -64,12 +70,12 @@ Multi-Currency Financial Ledger & Hard Cost Center Budget Enforcement (FR-209)
 
 ### 3. 💱 Multi-Currency Engine (SRS Section 16 & Section 20)
 - **Dynamic Currency Switcher**: 1-click real-time conversion bar in the Finance view supporting:
-  - **USD ($)** — Base Corporate Currency
-  - **EUR (€)** — 0.92 FX Rate
-  - **GBP (£)** — 0.79 FX Rate
-  - **INR (₹)** — 84.50 FX Rate
-  - **CAD (C$)** — 1.39 FX Rate
-  - **SGD (S$)** — 1.34 FX Rate
+  - **USD ($)** — Base Corporate Currency (Rate: 1.0)
+  - **EUR (€)** — European Euro (Rate: 0.92)
+  - **GBP (£)** — British Pound (Rate: 0.79)
+  - **INR (₹)** — Indian Rupee (Rate: 84.50)
+  - **CAD (C$)** — Canadian Dollar (Rate: 1.39)
+  - **SGD (S$)** — Singapore Dollar (Rate: 1.34)
 - **Live Re-calculation**: Dynamically recalculates Total Corporate Spend, Expense Reimbursement claims, Departmental Cost Center allocations, and Gross Settlements with native currency symbols and formatting.
 
 ### 4. 📊 1-Click Accounting Export Engine (QuickBooks / Xero / NetSuite / CSV) (SRS Section 13.6 & Section 19.4)
@@ -96,6 +102,87 @@ Multi-Currency Financial Ledger & Hard Cost Center Budget Enforcement (FR-209)
 - **Policy Engine**: In-Policy (green) vs Out-of-Policy (amber) classification based on corporate flight caps ($1,200), hotel night limits ($250), and permitted cabin classes.
 - **Manager Approval Pipeline**: Out-of-policy bookings trigger multi-tier approval flows with justification capture, approval counters, and 1-click decision modals.
 - **Corporate Card Settlement**: Instant corporate card checkout issuing real PNR references (e.g. `BA-849201`).
+
+### 7. 🏢 Super Admin Multi-Tenant Provisioning & Employee Onboarding (SRS Section 17 & 21)
+- **Multi-Tenant SaaS Governance**:
+  - Full visibility across provisioned corporate tenants (*Voyentra Global*, *Acme Aerospace*, *Nexus BioPharma*, *Starlight Logistics*).
+  - Track Monthly Active Travelers (MAT), seat utilization meters, and subscription plan tiers (*Enterprise*, *Growth*, *Starter*).
+  - Dynamic Feature Flag controls per tenant (`🚄 Rail Booking`, `🏨 Hotel Direct Card Billing`, `🔒 Hard Budget Locks`, `⚡ Auto-Approve <$500`).
+  - Tenant status lifecycle (`Active`, `Suspended`, `Provisioning`).
+- **Interactive Tenant Provisioning Wizard (`TenantProvisionModal.jsx`)**:
+  - Provisions new corporate workspaces with dedicated subdomains (e.g. `acme.voyentra.com`), operating currencies, seat ceilings, and feature flags (`POST /api/voyentra/admin/tenants`).
+- **CSV Employee Roster Importer (`EmployeeRosterImporter.jsx`)**:
+  - Drag-and-drop or load sample 5-employee corporate rosters.
+  - Interactive validation preview showing valid email checks, recognized RBAC roles (`traveler`, `manager`, `finance_manager`, `admin`), and cost center linking.
+  - 1-click batch provisioning and invitation dispatch (`POST /api/voyentra/admin/employees/bulk-invite`).
+
+### 8. 🎫 Digital Airline Boarding Pass & Hotel Voucher Generator (SRS Section 8 & 18)
+- **High-Fidelity Airline Boarding Pass (`DigitalPassModal.jsx`)**:
+  - Two-part perforated boarding pass card displaying carrier (*British Airways*), flight number (`BA 178`), e-ticket number, origin and destination terminals, departure and boarding times, gate (`B24`), seat (`14A Window`), and zone.
+  - Dynamic 2D Aztec / QR barcode encoding PNR reference for airport security and e-gate scanning.
+  - Frequent flyer number, checked baggage allowance, and 24/7 Duty of Care emergency hotline.
+- **Corporate Hotel Stay Voucher**:
+  - Check-in voucher for confirmed accommodations (*The Langham London*), check-in / check-out times, room type, corporate policy inclusions (breakfast, Wi-Fi, executive lounge), and direct corporate billing confirmation.
+- **Print & PDF Export**:
+  - Formatted `@media print` CSS stylesheet enabling 1-click clean printing / PDF saving directly from the browser without dashboard navigation chrome.
+  - Passbook JSON export for offline mobile access.
+
+---
+
+## 🏗️ Codebase & Component Architecture
+
+```
+Voyentra-main/
+├── README.md                                 # Complete project specification & guide
+├── voyentra-backend/                         # Node.js + Express API server
+│   ├── src/
+│   │   ├── config/
+│   │   │   ├── db.js                         # Supabase cloud pooler client
+│   │   │   └── voyentraDb.js                 # High-fidelity 13-table schema store
+│   │   ├── controllers/
+│   │   │   └── voyentraController.js         # Core controllers & business logic
+│   │   ├── middleware/
+│   │   │   └── authMiddleware.js             # RBAC role authentication
+│   │   ├── routes/
+│   │   │   └── voyentraRoutes.js             # 19 REST endpoints
+│   │   └── index.js                          # Express entrypoint & static server
+│   └── package.json
+└── voyentra-frontend/                        # React 19 + Vite client
+    ├── src/
+    │   ├── components/
+    │   │   ├── TravelerDashboard.jsx         # Search, my trips, expenses
+    │   │   ├── ManagerDashboard.jsx          # Team approvals & budget tracking
+    │   │   ├── FinanceDashboard.jsx          # Audit, multi-currency, GL exports
+    │   │   ├── AdminDashboard.jsx            # Multi-tenant provisioner & policy
+    │   │   ├── DutyOfCareCenter.jsx          # World map tracking & SOS alerts
+    │   │   ├── ReceiptScanner.jsx            # Tesseract OCR image scanner
+    │   │   ├── ReceiptInspectionModal.jsx    # Optical audit verification
+    │   │   ├── AccountingExportModal.jsx     # QuickBooks & Xero export modal
+    │   │   ├── TenantProvisionModal.jsx      # New corporate workspace wizard
+    │   │   ├── EmployeeRosterImporter.jsx    # CSV bulk onboarding tool
+    │   │   └── DigitalPassModal.jsx          # Boarding pass & printable voucher
+    │   ├── utils/
+    │   │   ├── ocrService.js                 # Client-side Tesseract.js worker
+    │   │   └── accountingExporter.js         # CSV export generator utilities
+    │   ├── App.jsx                           # Persona switching & state provider
+    │   ├── App.css                           # Enterprise layout & print styles
+    │   └── index.css                         # Core color palette & components
+    ├── dist/                                 # Production static build bundle
+    └── package.json
+```
+
+---
+
+## 👥 Personas & Role-Based Access Control (RBAC)
+
+The application simulates 4 distinct corporate personas to test strict RBAC boundaries:
+
+| Persona Name | Title / Organization Role | Primary Capabilities | Mock Auth Headers |
+| :--- | :--- | :--- | :--- |
+| **Alex Morgan** | Software Engineer (`traveler`) | Search travel, book in-policy flights, request manager sign-offs, submit OCR claims, view boarding passes | `x-user-id: 2222...0002`<br>`x-user-role: traveler` |
+| **David Miller** | VP of Engineering (`manager`) | Review pending travel requests, approve/reject with audit reason, monitor team budget spend | `x-user-id: 3333...0003`<br>`x-user-role: manager` |
+| **Elena Vance** | Financial Controller (`finance_manager`) | Inspect OCR receipt parameters, authorize reimbursements, switch currencies, export to QuickBooks/Xero, enforce hard budget locks | `x-user-id: 4444...0004`<br>`x-user-role: finance` |
+| **Chinmay Pardeshi** | Super Administrator (`admin`) | Configure policy rules, provision new tenant workspaces, manage feature flags, bulk invite employee rosters via CSV | `x-user-id: 5555...0005`<br>`x-user-role: admin` |
 
 ---
 
@@ -132,6 +219,7 @@ The backend and frontend are architected directly around your Supabase Cloud Dat
 - `GET /api/voyentra/hotels` — Search hotels with nightly cap policy validation.
 - `GET /api/voyentra/trips` — Retrieve confirmed employee and organization trips.
 - `POST /api/voyentra/bookings` — Book travel and issue PNR reservations via corporate card settlement.
+- `GET /api/voyentra/bookings/:id/ticket` — Retrieve digital boarding pass, QR codes, seat assignments, and hotel voucher details.
 
 ### Policy & Approvals
 - `GET /api/voyentra/policy` — Get active organization travel policy rules.
@@ -155,6 +243,14 @@ The backend and frontend are architected directly around your Supabase Cloud Dat
 - `GET /api/voyentra/currencies` — Retrieve live foreign exchange rates (USD, EUR, GBP, INR, CAD, SGD).
 - `GET /api/voyentra/accounting/export` — *(Finance/Admin)* Fetch general ledger records mapped to standard GL codes (`6200`, `6210`, `6220`, `6230`) in requested currency.
 - `POST /api/voyentra/cost-centers/:id/toggle-lock` — *(Finance/Admin)* Toggle Hard Budget Ceiling enforcement on cost center.
+
+### Super Admin & Multi-Tenant SaaS Governance (SRS Sections 17 & 21)
+- `GET /api/voyentra/admin/tenants` — *(Admin only)* List corporate tenants with MAT, seats, utilization %, and feature flags.
+- `POST /api/voyentra/admin/tenants` — *(Admin only)* Provision new corporate tenant workspace with custom subdomain.
+- `PUT /api/voyentra/admin/tenants/:id/status` — *(Admin only)* Toggle tenant status (`active` vs `suspended`).
+- `PUT /api/voyentra/admin/tenants/:id/feature-flags` — *(Admin only)* Configure tenant feature flags (`rail`, `hotel_direct_bill`, `strict_locks`, `auto_approve`).
+- `GET /api/voyentra/admin/employees` — *(Admin only)* Retrieve employee directory with roles and cost centers.
+- `POST /api/voyentra/admin/employees/bulk-invite` — *(Admin only)* Bulk invite employees from CSV roster.
 
 ---
 
@@ -242,6 +338,37 @@ The backend and frontend are architected directly around your Supabase Cloud Dat
 3. Lufthansa ($2,850) is tagged with an amber **OUT OF POLICY** badge (exceeds $1,200 flight cap).
 4. Click **Request Approval** $\rightarrow$ enter justification *"Urgent executive client summit"* and submit.
 5. Switch persona to **David Miller (VP / Approver)** $\rightarrow$ go to **Travel Approvals** $\rightarrow$ click **Approve** to authorize the trip.
+
+### 5. Test Super Admin Multi-Tenant Provisioning & CSV Employee Onboarding
+1. Switch persona to **Chinmay Pardeshi (Admin)** in the top bar.
+2. In the Admin view, select **Multi-Tenant SaaS Workspaces**:
+   - Inspect active tenant cards (*Voyentra Global*, *Acme Aerospace*, *Nexus BioPharma*, *Starlight Logistics*).
+   - Test toggle buttons for feature flags: click **🚄 Rail & Transit Booking** or **⚡ Auto-Approve Flights < $500** to toggle them live.
+   - Click **Suspend** on any active tenant to see the card update to red suspended state; click **Activate** to re-enable.
+3. **Provision a New Tenant**:
+   - Click the blue **"Provision New Corporate Tenant"** button.
+   - Enter Company Name: *"Apex Capital"*, Subdomain: *"apex"*, Plan: *Enterprise*, Currency: *GBP (£)*.
+   - Click **Provision Tenant Workspace** $\rightarrow$ the tenant is instantly registered with dedicated URL `apex.voyentra.com` and appended to the workspace grid.
+4. **CSV Bulk Employee Onboarding**:
+   - Click the **Employee Directory & CSV Onboarding** tab.
+   - Click **"Load Sample Roster (5 Employees)"** or drag and drop a CSV.
+   - Review the parsed preview table with role and cost center validations.
+   - Click **"Dispatch 5 Invitations"** $\rightarrow$ accounts are provisioned and added directly into the employee directory!
+
+### 6. Test Digital Airline Boarding Pass & Hotel Voucher Generator
+1. Switch persona to **Alex Morgan (Employee / Traveler)** in the top bar.
+2. Click **My Trips & Itineraries**:
+   - Locate the confirmed trip (*London, United Kingdom*).
+   - Click the blue **"E-Ticket & Pass"** button in the trip header or click **"Boarding Pass"** on the British Airways reservation.
+3. **Inspect Airline Boarding Pass**:
+   - A digital boarding pass card opens with carrier (*British Airways*), flight number (*BA 178*), seat (*14A Window*), gate (*B24*), departure terminal (*Terminal 7*), arrival terminal (*Terminal 5*), e-ticket number, and scannable 2D Aztec QR barcode.
+   - Click the copy button next to the PNR reference (`BA-849201`) to copy it to clipboard.
+4. **Inspect Hotel Stay Voucher**:
+   - On the Langham London hotel reservation, click **"Stay Voucher"**:
+   - The voucher displays hotel address (*1C Portland Place*), check-in / check-out dates, room type (*Executive King*), included amenities, corporate direct billing badge, and check-in QR code.
+5. **Print or Save as PDF**:
+   - Click **"Print / Save PDF"** $\rightarrow$ browser print preview opens with clean 1-page paper styling without dashboard sidebars.
+   - Click **"Passbook"** $\rightarrow$ downloads offline structured travel JSON passbook.
 
 ---
 

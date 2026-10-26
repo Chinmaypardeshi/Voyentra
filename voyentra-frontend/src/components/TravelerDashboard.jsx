@@ -16,10 +16,12 @@ import {
   Tag,
   ArrowRight,
   Eye,
-  Sparkles
+  Sparkles,
+  QrCode
 } from 'lucide-react';
 import ReceiptScanner from './ReceiptScanner';
 import ReceiptInspectionModal from './ReceiptInspectionModal';
+import DigitalPassModal from './DigitalPassModal';
 
 export default function TravelerDashboard({
   currentUser,
@@ -55,6 +57,8 @@ export default function TravelerDashboard({
   const [ocrData, setOcrData] = useState(null);
   const [receiptImage, setReceiptImage] = useState(null);
   const [selectedReceiptExpense, setSelectedReceiptExpense] = useState(null);
+  const [selectedPassBooking, setSelectedPassBooking] = useState(null);
+  const [selectedPassTrip, setSelectedPassTrip] = useState(null);
 
   // Alex's Personal Filtered Data (Strict Identity Boundary)
   const myTrips = trips.filter(t => t.primary_traveler_id === currentUser.id || t.traveler_name?.includes('Alex'));
@@ -472,7 +476,23 @@ export default function TravelerDashboard({
                         </div>
                       </div>
 
-                      <span className="badge badge-success">Status: {trip.status}</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <span className="badge badge-success">Status: {trip.status}</span>
+                        {trip.bookings?.length > 0 && (
+                          <button
+                            type="button"
+                            className="btn btn-primary btn-sm"
+                            onClick={() => {
+                              const flightBooking = trip.bookings?.find(b => b.booking_type === 'flight') || trip.bookings?.[0];
+                              setSelectedPassBooking(flightBooking);
+                              setSelectedPassTrip(trip);
+                            }}
+                            style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: '0.78rem', fontWeight: 600 }}
+                          >
+                            <QrCode size={13} /> E-Ticket & Pass
+                          </button>
+                        )}
+                      </div>
                     </div>
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
@@ -511,7 +531,20 @@ export default function TravelerDashboard({
                               <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#34d399' }}>
                                 ${bk.total_amount} {bk.currency}
                               </div>
-                              <span className="badge badge-success">Paid on Corporate Visa</span>
+                              <span className="badge badge-success" style={{ marginBottom: 4, display: 'inline-block' }}>Paid on Corporate Visa</span>
+                              <div>
+                                <button
+                                  type="button"
+                                  className="btn btn-secondary btn-sm"
+                                  onClick={() => {
+                                    setSelectedPassBooking(bk);
+                                    setSelectedPassTrip(trip);
+                                  }}
+                                  style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: '0.72rem', padding: '0.2rem 0.55rem', marginTop: 4 }}
+                                >
+                                  <QrCode size={12} style={{ color: '#818cf8' }} /> {bk.booking_type === 'flight' ? 'Boarding Pass' : 'Stay Voucher'}
+                                </button>
+                              </div>
                             </div>
                           </div>
                         ))
@@ -808,6 +841,19 @@ export default function TravelerDashboard({
           expense={selectedReceiptExpense}
           onClose={() => setSelectedReceiptExpense(null)}
           isFinance={false}
+        />
+      )}
+
+      {/* Digital Boarding Pass & Itinerary Voucher Modal */}
+      {selectedPassBooking && (
+        <DigitalPassModal
+          booking={selectedPassBooking}
+          trip={selectedPassTrip}
+          currentUser={currentUser}
+          onClose={() => {
+            setSelectedPassBooking(null);
+            setSelectedPassTrip(null);
+          }}
         />
       )}
     </>

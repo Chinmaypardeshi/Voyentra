@@ -68,11 +68,84 @@ const mockDb = {
       id: orgId,
       legal_name: 'Voyentra Technologies Inc.',
       display_name: 'Voyentra Global',
+      subdomain: 'voyentra.app',
+      plan_tier: 'Enterprise',
       country: 'USA',
       base_currency: 'USD',
       time_zone: 'America/New_York',
+      monthly_active_travelers: 120,
+      max_seats: 500,
+      feature_flags: {
+        rail_booking_enabled: true,
+        hotel_direct_billing: true,
+        strict_budget_locks: true,
+        flight_auto_approve: false
+      },
       subscription_status: 'active',
       created_at: new Date(Date.now() - 90 * 86400000).toISOString(),
+      updated_at: new Date().toISOString()
+    },
+    {
+      id: 'org-acme-2026',
+      legal_name: 'Acme Aerospace Corporation',
+      display_name: 'Acme Aerospace',
+      subdomain: 'acme.voyentra.com',
+      plan_tier: 'Growth',
+      country: 'USA',
+      base_currency: 'USD',
+      time_zone: 'America/Chicago',
+      monthly_active_travelers: 45,
+      max_seats: 150,
+      feature_flags: {
+        rail_booking_enabled: false,
+        hotel_direct_billing: true,
+        strict_budget_locks: false,
+        flight_auto_approve: true
+      },
+      subscription_status: 'active',
+      created_at: new Date(Date.now() - 45 * 86400000).toISOString(),
+      updated_at: new Date().toISOString()
+    },
+    {
+      id: 'org-nexus-2026',
+      legal_name: 'Nexus BioPharma International AG',
+      display_name: 'Nexus BioPharma',
+      subdomain: 'nexus.voyentra.com',
+      plan_tier: 'Enterprise',
+      country: 'Switzerland',
+      base_currency: 'EUR',
+      time_zone: 'Europe/Zurich',
+      monthly_active_travelers: 280,
+      max_seats: 1000,
+      feature_flags: {
+        rail_booking_enabled: true,
+        hotel_direct_billing: true,
+        strict_budget_locks: true,
+        flight_auto_approve: false
+      },
+      subscription_status: 'active',
+      created_at: new Date(Date.now() - 30 * 86400000).toISOString(),
+      updated_at: new Date().toISOString()
+    },
+    {
+      id: 'org-starlight-2026',
+      legal_name: 'Starlight Logistics GmbH',
+      display_name: 'Starlight Logistics',
+      subdomain: 'starlight.voyentra.eu',
+      plan_tier: 'Starter',
+      country: 'Germany',
+      base_currency: 'EUR',
+      time_zone: 'Europe/Berlin',
+      monthly_active_travelers: 18,
+      max_seats: 50,
+      feature_flags: {
+        rail_booking_enabled: true,
+        hotel_direct_billing: false,
+        strict_budget_locks: false,
+        flight_auto_approve: false
+      },
+      subscription_status: 'provisioning',
+      created_at: new Date(Date.now() - 5 * 86400000).toISOString(),
       updated_at: new Date().toISOString()
     }
   ],

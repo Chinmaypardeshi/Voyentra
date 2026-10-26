@@ -479,6 +479,87 @@ exports.getTrips = (req, res) => {
   res.json({ status: 'success', data: trips });
 };
 
+exports.getTicketDetails = (req, res) => {
+  const { id } = req.params;
+  const db = getMockDb();
+
+  // Find booking by id or supplier_reference
+  const booking = db.bookings.find(b => b.id === id || b.supplier_reference === id);
+  if (!booking) {
+    return res.status(404).json({ status: 'error', message: 'Booking not found' });
+  }
+
+  const trip = db.trips.find(t => t.id === booking.trip_id) || {};
+  const traveler = db.user_profiles.find(u => u.id === trip.primary_traveler_id) || db.user_profiles[0];
+  const org = db.organizations.find(o => o.id === booking.organization_id) || db.organizations[0];
+
+  const isFlight = booking.booking_type === 'flight';
+
+  const ticketData = {
+    booking_id: booking.id,
+    booking_type: booking.booking_type,
+    supplier_name: booking.supplier_name,
+    supplier_reference: booking.supplier_reference, // PNR
+    ticket_number: isFlight ? `084-${Math.floor(1000000000 + Math.random() * 9000000000)}` : `HTL-${booking.supplier_reference}`,
+    traveler: {
+      name: `${traveler.first_name || 'Alex'} ${traveler.last_name || 'Morgan'}`,
+      email: traveler.email,
+      phone: traveler.phone_number || '+1-555-0199',
+      frequent_flyer: isFlight ? 'BA-EC-8829104' : 'MAR-REWARDS-10928'
+    },
+    organization: {
+      name: org.legal_name || 'Voyentra Technologies Inc.',
+      cost_center: 'CC-ENG-101'
+    },
+    payment: {
+      method: 'Corporate Visa ending •••• 4012',
+      status: 'PAID & CONFIRMED',
+      total_amount: booking.total_amount,
+      currency: booking.currency || 'USD'
+    },
+    flight_details: isFlight ? {
+      flight_number: booking.supplier_payload?.flight_number || 'BA 178',
+      cabin: booking.supplier_payload?.cabin || 'Economy (In-Policy)',
+      origin_code: booking.supplier_payload?.origin || 'JFK',
+      origin_city: 'New York (JFK)',
+      origin_terminal: 'Terminal 7',
+      destination_code: booking.supplier_payload?.destination || 'LHR',
+      destination_city: 'London Heathrow (LHR)',
+      destination_terminal: 'Terminal 5',
+      departure_time: booking.supplier_payload?.departure || '2026-11-10 19:30',
+      boarding_time: '18:45',
+      arrival_time: '2026-11-11 07:15',
+      gate: 'B24',
+      seat: '14A (Window)',
+      zone: 'Group 3',
+      baggage: '2 Checked (23kg each) + 1 Cabin Carry-on',
+      barcode_raw: `M1MORGAN/ALEX       E${booking.supplier_reference} JFKLHRBA 0178 314Y014A0028 147>2180WW6314BBA`
+    } : null,
+    hotel_details: !isFlight ? {
+      hotel_name: booking.supplier_name || 'The Langham London',
+      address: '1C Portland Pl, London W1B 1JA, United Kingdom',
+      check_in_date: trip.start_date || '2026-11-10',
+      check_in_time: 'From 15:00',
+      check_out_date: trip.end_date || '2026-11-15',
+      check_out_time: 'Until 11:00',
+      nights: 5,
+      room_type: 'Executive Deluxe King Room (Non-Smoking)',
+      amenities: ['Breakfast Buffet Included', 'Complimentary High-Speed Wi-Fi', 'Executive Lounge Access'],
+      guest_count: '1 Adult'
+    } : null,
+    emergency_contact: {
+      duty_of_care_hotline: '+1-800-869-7233 (+1-800-VOY-SAFE)',
+      concierge_email: 'dutyofcare@voyentra.com',
+      policy_id: 'VOY-ENT-GL-2026-99'
+    }
+  };
+
+  res.json({
+    status: 'success',
+    data: ticketData
+  });
+};
+
 exports.bookTravelOption = async (req, res) => {
   const travelerId = req.user?.id || getMockDb().user_profiles[0].id;
   const { trip_id, booking_type, supplier_name, total_amount, currency, payload, cost_center_id } = req.body;
@@ -1099,4 +1180,247 @@ exports.toggleCostCenterLock = (req, res) => {
   }
 
   res.status(404).json({ status: 'error', message: 'Cost center not found' });
+};
+
+// =========================================================================
+// Super Admin Multi-Tenant Provisioning & Onboarding (SRS Section 17 & 21)
+// =========================================================================
+
+exports.getTenants = (req, res) => {
+  try {
+    const db = getMockDb();
+    const tenants = db.organizations.map(org => {
+      const activeTravelers = org.monthly_active_travelers || Math.floor(Math.random() * 50) + 10;
+      const maxSeats = org.max_seats || (org.plan_tier === 'Enterprise' ? 500 : 100);
+      return {
+        ...org,
+        monthly_active_travelers: activeTravelers,
+        max_seats: maxSeats,
+        seat_utilization_pct: Math.min(Math.round((activeTravelers / maxSeats) * 100), 100)
+      };
+    });
+
+    res.json({
+      status: 'success',
+      data: {
+        total_tenants: tenants.length,
+        active_tenants: tenants.filter(t => t.subscription_status === 'active').length,
+        tenants
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ status: 'error', message: err.message });
+  }
+};
+
+exports.provisionTenant = (req, res) => {
+  try {
+    const {
+      legal_name,
+      display_name,
+      subdomain,
+      country = 'USA',
+      base_currency = 'USD',
+      time_zone = 'America/New_York',
+      plan_tier = 'Growth',
+      max_seats = 100,
+      admin_name,
+      admin_email,
+      feature_flags
+    } = req.body;
+
+    if (!legal_name || !subdomain) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Legal company name and tenant subdomain are required.'
+      });
+    }
+
+    const cleanSubdomain = subdomain.toLowerCase().replace(/[^a-z0-9-]/g, '');
+    const cleanDomain = cleanSubdomain.includes('.') ? cleanSubdomain : `${cleanSubdomain}.voyentra.com`;
+
+    const db = getMockDb();
+
+    // Check if subdomain already exists
+    const existing = db.organizations.find(o => o.subdomain === cleanDomain);
+    if (existing) {
+      return res.status(409).json({
+        status: 'error',
+        message: `Tenant subdomain ${cleanDomain} is already registered.`
+      });
+    }
+
+    const newOrgId = `org-${cleanSubdomain}-${Date.now().toString(36)}`;
+    const newOrg = {
+      id: newOrgId,
+      legal_name: legal_name.trim(),
+      display_name: (display_name || legal_name).trim(),
+      subdomain: cleanDomain,
+      plan_tier,
+      country,
+      base_currency,
+      time_zone,
+      monthly_active_travelers: 1,
+      max_seats: Number(max_seats) || 100,
+      feature_flags: feature_flags || {
+        rail_booking_enabled: true,
+        hotel_direct_billing: true,
+        strict_budget_locks: false,
+        flight_auto_approve: false
+      },
+      subscription_status: 'active',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+
+    db.organizations.push(newOrg);
+
+    // If an initial admin was provided, provision their user profile
+    if (admin_email) {
+      const adminNames = (admin_name || 'Admin User').trim().split(' ');
+      const newAdminId = crypto.randomUUID();
+      db.user_profiles.push({
+        id: newAdminId,
+        first_name: adminNames[0] || 'Organization',
+        last_name: adminNames.slice(1).join(' ') || 'Admin',
+        email: admin_email.trim().toLowerCase(),
+        role: 'admin',
+        organization_id: newOrgId,
+        created_at: new Date().toISOString()
+      });
+    }
+
+    res.status(201).json({
+      status: 'success',
+      message: `Tenant ${newOrg.display_name} (${newOrg.subdomain}) successfully provisioned!`,
+      data: newOrg
+    });
+  } catch (err) {
+    res.status(500).json({ status: 'error', message: err.message });
+  }
+};
+
+exports.updateTenantStatus = (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body; // 'active' | 'suspended' | 'provisioning'
+    const db = getMockDb();
+    const org = db.organizations.find(o => o.id === id || o.subdomain === id);
+
+    if (!org) {
+      return res.status(404).json({ status: 'error', message: 'Tenant not found.' });
+    }
+
+    org.subscription_status = status || (org.subscription_status === 'active' ? 'suspended' : 'active');
+    org.updated_at = new Date().toISOString();
+
+    res.json({
+      status: 'success',
+      message: `Tenant ${org.display_name} status updated to ${org.subscription_status.toUpperCase()}.`,
+      data: org
+    });
+  } catch (err) {
+    res.status(500).json({ status: 'error', message: err.message });
+  }
+};
+
+exports.updateTenantFeatureFlags = (req, res) => {
+  try {
+    const { id } = req.params;
+    const { feature_flags } = req.body;
+    const db = getMockDb();
+    const org = db.organizations.find(o => o.id === id || o.subdomain === id);
+
+    if (!org) {
+      return res.status(404).json({ status: 'error', message: 'Tenant not found.' });
+    }
+
+    org.feature_flags = {
+      ...(org.feature_flags || {}),
+      ...(feature_flags || {})
+    };
+    org.updated_at = new Date().toISOString();
+
+    res.json({
+      status: 'success',
+      message: `Feature flags updated for ${org.display_name}.`,
+      data: org
+    });
+  } catch (err) {
+    res.status(500).json({ status: 'error', message: err.message });
+  }
+};
+
+exports.getAdminEmployees = (req, res) => {
+  try {
+    const db = getMockDb();
+    const employees = db.user_profiles.map(u => {
+      const dept = db.departments.find(d => d.id === u.department_id) || db.departments[0];
+      const cc = db.cost_centers.find(c => c.id === u.cost_center_id) || db.cost_centers[0];
+      return {
+        ...u,
+        department_name: dept?.name || 'Engineering & Technology',
+        cost_center_code: cc?.code || 'CC-ENG-101',
+        cost_center_name: cc?.name || 'Software Engineering',
+        status: 'active'
+      };
+    });
+
+    res.json({
+      status: 'success',
+      data: {
+        total_employees: employees.length,
+        employees
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ status: 'error', message: err.message });
+  }
+};
+
+exports.bulkInviteEmployees = (req, res) => {
+  try {
+    const { employees } = req.body; // array of { first_name, last_name, email, role, department, cost_center }
+    if (!Array.isArray(employees) || employees.length === 0) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Provide an array of employee roster records to invite.'
+      });
+    }
+
+    const db = getMockDb();
+    const addedList = [];
+
+    employees.forEach(emp => {
+      const existing = db.user_profiles.find(u => u.email.toLowerCase() === (emp.email || '').toLowerCase().trim());
+      if (existing) {
+        addedList.push({ ...existing, invited: false, note: 'Already registered' });
+      } else {
+        const newProfile = {
+          id: crypto.randomUUID(),
+          first_name: emp.first_name || 'Team',
+          last_name: emp.last_name || 'Member',
+          email: emp.email.toLowerCase().trim(),
+          phone_number: emp.phone_number || '+1-555-0100',
+          role: ['traveler', 'manager', 'finance_manager', 'admin'].includes(emp.role) ? emp.role : 'traveler',
+          created_at: new Date().toISOString(),
+          invited: true
+        };
+        db.user_profiles.push(newProfile);
+        addedList.push(newProfile);
+      }
+    });
+
+    res.status(201).json({
+      status: 'success',
+      message: `Successfully provisioned ${addedList.filter(e => e.invited).length} new corporate employees!`,
+      data: {
+        invited_count: addedList.filter(e => e.invited).length,
+        total_processed: addedList.length,
+        employees: addedList
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ status: 'error', message: err.message });
+  }
 };
