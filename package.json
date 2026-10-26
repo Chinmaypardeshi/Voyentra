@@ -1,0 +1,13 @@
+{
+  "name": "voyentra",
+  "version": "1.0.0",
+  "description": "Voyentra — Corporate Travel, Expense & Spend Management Platform (SRS v1.0, Ref: Perk)",
+  "scripts": {
+    "install:all": "npm --prefix voyentra-backend install && npm --prefix voyentra-frontend install --include=dev",
+    "postinstall": "npm --prefix voyentra-backend install && npm --prefix voyentra-frontend install --include=dev",
+    "build": "npm --prefix voyentra-frontend run build",
+    "start": "node voyentra-backend/src/index.js",
+    "dev:backend": "npm --prefix voyentra-backend run dev",
+    "dev:frontend": "npm --prefix voyentra-frontend run dev"
+  }
+}

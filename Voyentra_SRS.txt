@@ -1,0 +1,3719 @@
+SOFTWARE REQUIREMENTS SPECIFICATION (SRS)
+PROJECT: VOYENTRA — CORPORATE TRAVEL, EXPENSE & SPEND MANAGEMENT PLATFORM
+REFERENCE PRODUCT: PERK
+DOCUMENT VERSION: 1.0
+DOCUMENT STATUS: DRAFT FOR PRODUCT DISCOVERY, ARCHITECTURE & ESTIMATION
+DOCUMENT OWNER: HELOIX
+DOCUMENT TYPE: PRODUCT AND TECHNICAL REQUIREMENTS SPECIFICATION
+
+
+======================================================================
+1. PROJECT OVERVIEW
+======================================================================
+
+1.1 PROJECT PURPOSE
+
+Heloix intends to develop a comprehensive corporate travel, expense, and
+spend management platform inspired by the functional capabilities of Perk.
+
+The platform will allow companies to manage employee travel, corporate
+travel policies, bookings, approvals, expenses, invoices, reporting,
+supplier integrations, and administrative operations through a unified
+digital platform.
+
+The product will operate as a multi-tenant SaaS platform, allowing
+multiple businesses to register, configure their organizations, invite
+employees, manage travel policies, and monitor spending independently.
+
+The platform must support a future expansion into a B2C travel booking
+business without requiring a complete architectural redesign.
+
+
+1.2 PRODUCT VISION
+
+Build a centralized business travel and expense management platform
+that simplifies the entire corporate travel lifecycle:
+
+Employee travel request
+        |
+        v
+Policy validation
+        |
+        v
+Manager approval, if required
+        |
+        v
+Travel search and booking
+        |
+        v
+Ticket and reservation management
+        |
+        v
+Trip modifications and cancellations
+        |
+        v
+Expense collection and reconciliation
+        |
+        v
+Financial reporting and accounting integration
+
+
+1.3 CORE BUSINESS OBJECTIVES
+
+BO-01: Enable businesses to manage employee travel through one platform.
+
+BO-02: Provide access to bookable flights, hotels, trains, rental cars,
+       and other supported travel services.
+
+BO-03: Automate travel approval and policy enforcement.
+
+BO-04: Centralize booking records, travel documents, and invoices.
+
+BO-05: Simplify expense submission, review, reimbursement tracking,
+       and financial reconciliation.
+
+BO-06: Provide administrators with spending controls and organizational
+       visibility.
+
+BO-07: Enable integrations with external travel suppliers, expense
+       systems, HR systems, and accounting platforms.
+
+BO-08: Generate revenue through SaaS subscriptions, transaction fees,
+       supplier commissions, negotiated service fees, or combinations
+       of these models.
+
+BO-09: Support international customers, multiple currencies, multiple
+       languages, and country-specific configuration.
+
+BO-10: Establish a scalable foundation for future B2C travel services,
+       advanced automation, and AI-assisted operations.
+
+
+1.4 PRODUCT POSITIONING
+
+The platform will have the following major product areas:
+
+A. Corporate Marketing Website
+B. Corporate Customer Onboarding
+C. Corporate Travel Booking Platform
+D. Travel Policy and Approval Management
+E. Employee Travel Portal
+F. Expense Management
+G. Finance and Spend Management
+H. Company Administration
+I. Travel Operations and Customer Support
+J. Supplier and Third-Party Integrations
+K. Analytics and Reporting
+L. AI-Assisted Automation
+M. Internal Super Administration
+N. Public APIs and Integration Infrastructure
+O. Future B2C Travel Booking Platform
+
+
+1.5 TERMINOLOGY
+
+Organization:
+A business subscribing to Voyentra.
+
+Tenant:
+An isolated customer environment within the SaaS platform.
+
+Traveler:
+An employee or authorized individual who can book or request travel.
+
+Travel Request:
+A request for authorization to undertake a trip.
+
+Travel Booking:
+A confirmed reservation with a travel supplier.
+
+Travel Inventory:
+The collection of flights, hotels, rental cars, and other travel
+products available for search and booking.
+
+Travel Supplier:
+An airline, hotel, global distribution system, travel technology
+provider, online travel agency, or other booking provider.
+
+Travel Policy:
+A collection of rules governing permitted corporate travel.
+
+Approver:
+A person authorized to approve or reject a travel request or expense.
+
+Travel Administrator:
+A customer-side user responsible for managing organizational travel.
+
+Platform Administrator:
+A Heloix employee authorized to manage the SaaS platform.
+
+Expense:
+A business-related expenditure submitted for review or reimbursement.
+
+Multi-Tenancy:
+An architecture in which multiple customer organizations use the same
+platform while their data and permissions remain isolated.
+
+
+======================================================================
+2. PROJECT SCOPE
+======================================================================
+
+2.1 IN-SCOPE FUNCTIONALITY
+
+The initial complete-product specification includes the following.
+
+CORPORATE WEB PLATFORM
+- Marketing website.
+- Product and feature pages.
+- Pricing pages.
+- Contact and demo request forms.
+- Customer registration.
+- Authentication.
+- Organization onboarding.
+- Customer dashboard.
+- Employee invitation and management.
+
+TRAVEL MANAGEMENT
+- Flight search and booking.
+- Hotel search and booking.
+- Rental car search and booking.
+- Train booking where supplier inventory is available.
+- Other travel services where commercially and technically supported.
+- Multi-passenger bookings.
+- One-way, return, and multi-city flights.
+- Travel requests and approval workflows.
+- Travel policy enforcement.
+- Booking management.
+- Cancellations and modifications.
+- Ticket and itinerary storage.
+- Travel notifications.
+- Trip management.
+
+EXPENSE MANAGEMENT
+- Manual expense creation.
+- Receipt upload.
+- OCR-assisted receipt extraction.
+- Expense categorization.
+- Expense policy validation.
+- Expense approval.
+- Reimbursement tracking.
+- Corporate card transaction imports where supported.
+- Expense reconciliation.
+- Accounting exports.
+
+FINANCE AND REPORTING
+- Corporate spending visibility.
+- Travel budget management.
+- Department-level spending.
+- Cost center management.
+- Invoice management.
+- Tax information.
+- Currency conversion.
+- Financial reports.
+- Audit trails.
+
+ADMINISTRATION
+- Organization management.
+- Employee and role management.
+- Travel policy configuration.
+- Approval configuration.
+- Billing and subscription management.
+- Supplier configuration.
+- Support operations.
+- Platform-wide administration.
+
+INTEGRATIONS
+- Travel inventory providers.
+- Payment gateways.
+- Email and notification services.
+- Accounting platforms.
+- HR systems.
+- Identity providers.
+- Calendar systems.
+- Corporate card providers.
+- Analytics systems.
+
+FUTURE EXTENSIONS
+- Public B2C travel booking.
+- AI-assisted travel planning.
+- Advanced travel disruption management.
+- Travel risk intelligence.
+- Automated reconciliation.
+- Additional financial products through authorized partners.
+
+
+2.2 OUT-OF-SCOPE BY DEFAULT
+
+The following are not assumed to be developed directly by Heloix unless
+separately approved and supported by commercial agreements:
+
+- An airline reservation inventory system.
+- A global distribution system.
+- An airline ticket settlement network.
+- Direct airline integrations without supplier authorization.
+- A payment acquiring network.
+- A banking infrastructure.
+- A proprietary corporate card issuing network.
+- A money transfer network.
+- A global hotel inventory aggregation network.
+- A proprietary tax calculation engine for every jurisdiction.
+- A proprietary identity verification infrastructure.
+- An airline fare filing or ticket distribution system.
+
+The platform may integrate with licensed providers for these services.
+
+IMPORTANT:
+A complete corporate travel platform cannot be delivered merely by
+building a frontend and database. Searchable inventory, booking
+confirmation, ticket issuance, refunds, and supplier servicing require
+working supplier integrations and the relevant commercial permissions.
+
+
+======================================================================
+3. USER ROLES AND PERMISSIONS
+======================================================================
+
+3.1 PUBLIC VISITOR
+
+Capabilities:
+- View marketing pages.
+- Explore product features.
+- View publicly available pricing.
+- Submit contact requests.
+- Request a demonstration.
+- Register an organization.
+- Access public documentation.
+
+Restrictions:
+- Cannot access customer organization data.
+- Cannot access internal platform administration.
+
+
+3.2 ORGANIZATION OWNER
+
+Capabilities:
+- Create and configure an organization.
+- Manage company settings.
+- Invite employees.
+- Assign roles.
+- Configure billing.
+- Configure travel policies.
+- Configure approval workflows.
+- View organization-wide reports.
+- Manage integrations.
+- Assign administrators.
+- Deactivate organization users.
+
+The organization owner must not be able to access another tenant's data.
+
+
+3.3 ORGANIZATION ADMINISTRATOR
+
+Capabilities:
+- Manage employee accounts.
+- Manage organizational structure.
+- Configure departments and cost centers.
+- Configure travel policies.
+- Configure approval rules.
+- Manage company travel preferences.
+- Access permitted organization reports.
+- Configure travel supplier preferences.
+- Review travel and expense activity.
+
+Billing permissions may be restricted according to the owner's settings.
+
+
+3.4 TRAVELER / EMPLOYEE
+
+Capabilities:
+- Manage personal profile.
+- Maintain traveler information.
+- Search available travel options.
+- Create travel requests.
+- Submit travel bookings where authorized.
+- View personal bookings.
+- Access itineraries.
+- Submit expenses.
+- Upload receipts.
+- Track expense approvals.
+- Request booking modifications or cancellations.
+- Receive travel notifications.
+
+Restrictions:
+- Cannot modify organization-wide policies.
+- Cannot view unauthorized employee expenses.
+- Cannot approve their own requests where approval separation is
+  required by organizational policy.
+
+
+3.5 TRAVEL MANAGER
+
+Capabilities:
+- Review travel requests.
+- Approve or reject requests within assigned authority.
+- Monitor employee trips.
+- Review policy violations.
+- View permitted travel reports.
+- Assist with bookings.
+- Manage permitted booking changes.
+
+
+3.6 APPROVER
+
+Capabilities:
+- View assigned approval requests.
+- Review travel and expense details.
+- Approve requests.
+- Reject requests with reasons.
+- Request additional information.
+- Delegate approvals where authorized.
+- View approval history.
+
+The system must enforce separation between request creation and approval
+where the organization requires it.
+
+
+3.7 FINANCE MANAGER
+
+Capabilities:
+- Review submitted expenses.
+- Validate expense categories.
+- Review receipts.
+- Approve or reject reimbursements.
+- Review invoices.
+- Manage financial classifications.
+- Export accounting data.
+- Review spending reports.
+- Reconcile supported payment transactions.
+
+
+3.8 DEPARTMENT MANAGER
+
+Capabilities:
+- Review requests from assigned departments.
+- Approve requests within configured limits.
+- Monitor departmental spending.
+- Review departmental reports.
+
+
+3.9 TRAVEL OPERATIONS AGENT
+
+Capabilities:
+- Search and access bookings according to assigned permissions.
+- Assist with cancellations and changes.
+- Investigate booking failures.
+- Manage supported supplier communications.
+- Handle disruption cases.
+- Record support actions.
+- Escalate supplier issues.
+
+
+3.10 CUSTOMER SUPPORT AGENT
+
+Capabilities:
+- View permitted customer records.
+- Investigate customer issues.
+- Manage support tickets.
+- Record customer communications.
+- Escalate technical or supplier problems.
+
+Sensitive traveler and payment data must be masked unless explicitly
+required for an authorized support task.
+
+
+3.11 PLATFORM ADMINISTRATOR
+
+Capabilities:
+- Manage customer organizations.
+- Suspend or reactivate organizations.
+- Manage platform-level configuration.
+- Manage approved supplier integrations.
+- Monitor platform health.
+- Review system-wide operational metrics.
+- Manage support permissions.
+- Investigate technical failures.
+- Manage subscription plans.
+- View audit records according to authorization.
+
+All privileged administrative actions must be auditable.
+
+
+3.12 PLATFORM FINANCE ADMINISTRATOR
+
+Capabilities:
+- Manage subscription invoices.
+- Monitor customer payments.
+- Manage approved billing adjustments.
+- Review refunds and credits.
+- Generate revenue reports.
+- Monitor transaction reconciliation.
+
+
+3.13 SYSTEM SERVICE ACCOUNTS
+
+Capabilities:
+- Execute authorized background tasks.
+- Process supplier webhooks.
+- Send notifications.
+- Process imports and exports.
+- Execute scheduled reconciliation.
+- Perform permitted automated workflows.
+
+Service accounts must have limited, explicit permissions and must not
+use unrestricted administrator credentials.
+
+
+======================================================================
+4. CORPORATE MARKETING WEBSITE
+======================================================================
+
+4.1 OBJECTIVE
+
+Create a conversion-focused corporate website explaining the Voyentra
+product, demonstrating its value, and converting prospective businesses
+into qualified leads or registered customers.
+
+
+4.2 REQUIRED PUBLIC PAGES
+
+P-01: Homepage
+P-02: Product Overview
+P-03: Corporate Travel Management
+P-04: Flight Booking
+P-05: Hotel Booking
+P-06: Travel Policy Management
+P-07: Approval Automation
+P-08: Expense Management
+P-09: Spend Management
+P-10: Reporting and Analytics
+P-11: Integrations
+P-12: Security and Privacy
+P-13: Solutions by Company Size
+P-14: Solutions by Industry
+P-15: Pricing
+P-16: Customer Stories
+P-17: Resources / Blog
+P-18: Help Center
+P-19: Contact
+P-20: Request a Demo
+P-21: Sign In
+P-22: Create Account
+P-23: Terms and Conditions
+P-24: Privacy Policy
+P-25: Cookie Policy
+P-26: Data Processing Information
+P-27: Accessibility Statement
+
+
+4.3 HOMEPAGE REQUIREMENTS
+
+The homepage must include:
+
+- Clear product positioning.
+- Primary call to action.
+- Secondary call to action.
+- Corporate travel management overview.
+- Expense management overview.
+- Travel booking benefits.
+- Approval automation benefits.
+- Policy compliance benefits.
+- Supported integrations.
+- Security and compliance information.
+- Customer testimonials where authorized.
+- Customer logos where authorized.
+- Product screenshots or demonstrations.
+- Pricing or commercial enquiry options.
+- Frequently asked questions.
+- Footer navigation.
+- Contact details.
+- Appropriate legal disclosures.
+
+Primary conversion actions:
+- Request a demo.
+- Create an account.
+- Contact sales.
+
+
+4.4 LEAD MANAGEMENT
+
+The system shall:
+
+FR-001: Allow visitors to submit demo requests.
+
+FR-002: Capture company name, work email, name, company size, and
+        other configured qualification fields.
+
+FR-003: Validate mandatory fields and email format.
+
+FR-004: Prevent or limit spam submissions.
+
+FR-005: Store leads in the internal CRM or configured CRM integration.
+
+FR-006: Send confirmation emails to leads.
+
+FR-007: Notify designated sales personnel.
+
+FR-008: Record lead source, landing page, and campaign parameters
+        where available and permitted.
+
+FR-009: Allow administrators to configure lead routing.
+
+FR-010: Track submission timestamps and lead status.
+
+FR-011: Provide consent controls where legally required.
+
+FR-012: Support future integration with sales automation platforms.
+
+
+4.5 CONTENT MANAGEMENT
+
+Authorized administrators should be able to manage:
+
+- Website pages.
+- Blog posts.
+- Feature descriptions.
+- FAQs.
+- Customer stories.
+- SEO metadata.
+- Images and documents.
+- Navigation menus.
+- Public pricing content.
+- Legal content.
+
+Published content must be versioned where practical.
+
+Changes to legal and pricing content must be attributable to an
+authorized user.
+
+
+======================================================================
+5. CUSTOMER REGISTRATION AND ONBOARDING
+======================================================================
+
+5.1 REGISTRATION
+
+FR-013: Users shall be able to register using supported authentication
+        methods.
+
+FR-014: The platform shall verify email addresses where required.
+
+FR-015: The platform shall prevent unauthorized duplicate account
+        creation according to configured rules.
+
+FR-016: Users shall accept applicable terms and privacy notices.
+
+FR-017: Registration shall create an organization only after successful
+        completion of the required registration workflow.
+
+FR-018: The platform shall support invited-user registration.
+
+
+5.2 ORGANIZATION SETUP
+
+During onboarding, the organization owner shall configure:
+
+- Legal company name.
+- Display name.
+- Registered address.
+- Country of operation.
+- Primary business currency.
+- Time zone.
+- Business email domain.
+- Tax details where required.
+- Employee count or company size.
+- Department structure.
+- Cost centers.
+- Billing information.
+- Preferred travel configuration.
+- Initial travel policies.
+- Approval configuration.
+- Initial administrators.
+
+FR-019: The system shall create a unique organization identifier.
+
+FR-020: Organization data shall be isolated from other tenants.
+
+FR-021: The system shall support incomplete onboarding and allow users
+        to resume setup.
+
+FR-022: The system shall show onboarding completion status.
+
+FR-023: Administrators shall be able to edit organization settings
+        after onboarding.
+
+
+5.3 EMPLOYEE INVITATIONS
+
+FR-024: Administrators shall be able to invite employees individually.
+
+FR-025: Bulk invitations shall be supported through CSV import.
+
+FR-026: The platform shall validate imported records.
+
+FR-027: Duplicate employees shall be identified.
+
+FR-028: Invitations shall have configurable expiry periods.
+
+FR-029: Administrators shall be able to resend or revoke invitations.
+
+FR-030: The platform shall record invitation status.
+
+FR-031: Users shall receive an invitation notification.
+
+FR-032: Administrators shall be able to assign departments, managers,
+        cost centers, and roles to employees.
+
+
+======================================================================
+6. AUTHENTICATION AND ACCOUNT SECURITY
+======================================================================
+
+FR-033: Support secure user login and logout.
+
+FR-034: Support password reset.
+
+FR-035: Support account email verification.
+
+FR-036: Support configurable password policies.
+
+FR-037: Support multi-factor authentication.
+
+FR-038: Support session expiry and session revocation.
+
+FR-039: Support role-based access control.
+
+FR-040: Support enterprise single sign-on through compatible identity
+        providers and agreed protocols.
+
+FR-041: Record significant authentication events.
+
+FR-042: Apply rate limits to authentication endpoints.
+
+FR-043: Detect and restrict suspicious authentication attempts.
+
+FR-044: Allow administrators to deactivate employee accounts.
+
+FR-045: Prevent disabled users from accessing protected resources.
+
+FR-046: Provide account recovery through verified channels.
+
+FR-047: Ensure authentication tokens cannot be reused beyond their
+        permitted lifetime.
+
+FR-048: Support organization-level security settings where required.
+
+The implementation must not store plaintext passwords or expose
+authentication secrets in logs.
+
+
+======================================================================
+7. TRAVELER PROFILE MANAGEMENT
+======================================================================
+
+7.1 PROFILE DATA
+
+A traveler profile may include:
+
+- Legal first name.
+- Legal last name.
+- Preferred name.
+- Date of birth, when required for travel.
+- Gender or other supplier-required passenger information, where
+  legally appropriate and necessary.
+- Email address.
+- Mobile number.
+- Nationality, where required.
+- Passport information, where required.
+- Passport expiry date, where required.
+- Visa-related information, where supported.
+- Frequent flyer memberships.
+- Hotel loyalty memberships.
+- Preferred seat.
+- Meal preferences.
+- Accessibility requirements.
+- Emergency contact information.
+- Travel preferences.
+- Department.
+- Manager.
+- Cost center.
+- Employee identifier.
+
+Sensitive information must only be collected when necessary.
+
+
+7.2 PROFILE REQUIREMENTS
+
+FR-049: Users shall be able to maintain permitted personal information.
+
+FR-050: Administrators shall be able to manage employee records according
+        to assigned permissions.
+
+FR-051: Traveler details shall be validated before submission to
+        suppliers where possible.
+
+FR-052: The system shall securely store sensitive traveler information.
+
+FR-053: Passport and identity documents shall be encrypted at rest and
+        masked in ordinary interface views.
+
+FR-054: Access to sensitive traveler data shall be logged.
+
+FR-055: The system shall distinguish between required and optional
+        traveler fields.
+
+FR-056: Users shall be able to maintain travel preferences.
+
+FR-057: The system shall support profile updates without altering
+        historical booking records incorrectly.
+
+
+======================================================================
+8. TRAVEL SEARCH AND INVENTORY
+======================================================================
+
+8.1 GENERAL REQUIREMENTS
+
+The travel search engine shall provide a unified interface across
+supported suppliers.
+
+The architecture must allow additional suppliers to be added without
+requiring a complete redesign of the customer-facing application.
+
+FR-058: Search shall return available inventory from configured
+        suppliers.
+
+FR-059: Search results shall identify the supplier and relevant fare
+        or booking conditions.
+
+FR-060: Search results shall show prices, taxes, fees, and mandatory
+        charges to the extent the supplier provides this information.
+
+FR-061: Search results shall support sorting and filtering.
+
+FR-062: Search results shall show availability limitations.
+
+FR-063: The platform shall distinguish indicative prices from confirmed
+        booking prices.
+
+FR-064: Prices and availability shall be revalidated before purchase.
+
+FR-065: Supplier failures shall not cause unrelated search services
+        to fail unnecessarily.
+
+FR-066: The platform shall log supplier response times and errors.
+
+FR-067: The platform shall support supplier-specific rate limits.
+
+FR-068: The system shall prevent duplicate purchase attempts when
+        retrying an uncertain booking operation.
+
+FR-069: Search results shall display relevant cancellation and change
+        conditions when supplied.
+
+FR-070: The platform shall normalize supplier responses into a common
+        internal data model.
+
+
+8.2 FLIGHT SEARCH
+
+The flight search module shall support:
+
+- One-way journeys.
+- Return journeys.
+- Multi-city journeys.
+- Multiple travelers.
+- Adult, child, and infant passenger categories where supported.
+- Cabin class.
+- Origin and destination airports.
+- Departure dates.
+- Return dates.
+- Flexible-date search where supported.
+- Direct-flight filters.
+- Airline filters.
+- Departure-time filters.
+- Arrival-time filters.
+- Journey-duration filters.
+- Number-of-stop filters.
+- Baggage filters where supported.
+- Fare-family filters where supported.
+- Refundability filters where supported.
+- Price sorting.
+- Duration sorting.
+- Departure-time sorting.
+
+FR-071: The user shall be able to enter airports using airport codes,
+        city names, or supported location search.
+
+FR-072: The system shall validate journey dates.
+
+FR-073: The system shall validate passenger combinations against
+        supplier restrictions.
+
+FR-074: The system shall display flight segments and connections.
+
+FR-075: The system shall display baggage allowances when available.
+
+FR-076: The system shall display fare restrictions when available.
+
+FR-077: The system shall display supplier-supported seat and ancillary
+        options.
+
+FR-078: The system shall recheck fare availability before booking.
+
+FR-079: The system shall clearly communicate fare changes.
+
+FR-080: The system shall support multiple currencies where supported
+        by the supplier and payment configuration.
+
+
+8.3 HOTEL SEARCH
+
+The hotel module shall support:
+
+- Destination search.
+- Check-in and check-out dates.
+- Room count.
+- Guest count.
+- Room occupancy.
+- Hotel category filters where available.
+- Price filters.
+- Property ratings where available.
+- Amenities.
+- Neighborhood or location filters.
+- Distance from a destination where supported.
+- Refundability filters.
+- Meal-plan filters.
+- Room-type selection.
+- Hotel image galleries.
+- Property descriptions.
+- Cancellation conditions.
+- Taxes and fees.
+- Corporate rates where contractually available.
+
+FR-081: Hotel results shall show available room types.
+
+FR-082: Hotel booking shall support the required guest information.
+
+FR-083: The system shall display check-in and check-out details.
+
+FR-084: The system shall disclose non-refundable conditions before
+        the customer commits to a booking.
+
+FR-085: The system shall revalidate room availability and pricing before
+        purchase.
+
+FR-086: The system shall retain the supplier's cancellation policy
+        associated with the booking.
+
+
+8.4 CAR RENTAL SEARCH
+
+The car rental module shall support:
+
+- Pickup location.
+- Pickup date and time.
+- Return location.
+- Return date and time.
+- Vehicle category.
+- Transmission filters where available.
+- Passenger capacity.
+- Luggage capacity.
+- Rental supplier.
+- Price.
+- Insurance information where supplied.
+- Mileage conditions.
+- Fuel policy.
+- Driver eligibility requirements.
+- Cancellation conditions.
+
+FR-087: The platform shall validate rental periods.
+
+FR-088: The platform shall display the supplier's driver requirements.
+
+FR-089: The platform shall disclose material additional fees when
+        provided by the supplier.
+
+
+8.5 TRAIN AND OTHER INVENTORY
+
+FR-090: The platform architecture shall support additional travel
+        categories through supplier adapters.
+
+FR-091: Train booking shall be enabled only for supported routes and
+        suppliers.
+
+FR-092: Each inventory category shall use its applicable supplier
+        booking, payment, modification, and cancellation workflows.
+
+FR-093: Unsupported routes or services shall produce clear messages
+        rather than misleading availability.
+
+
+======================================================================
+9. CORPORATE TRAVEL POLICY ENGINE
+======================================================================
+
+9.1 POLICY OBJECTIVES
+
+The policy engine shall evaluate whether a travel request or proposed
+booking complies with the organization's configured travel rules.
+
+
+9.2 POLICY CONFIGURATION
+
+Administrators shall be able to configure:
+
+- Permitted cabin classes.
+- Maximum airfare.
+- Maximum hotel nightly rate.
+- Maximum rental vehicle category.
+- Advance booking requirements.
+- Preferred suppliers.
+- Restricted suppliers.
+- Permitted travel classes by employee level.
+- Domestic travel rules.
+- International travel rules.
+- Department-specific rules.
+- Country-specific rules.
+- Project-specific budgets.
+- Weekend travel restrictions where applicable.
+- Maximum trip budgets.
+- Booking authorization requirements.
+- Approval thresholds.
+- Exception handling.
+- Cost center requirements.
+- Required travel justification.
+
+FR-094: Administrators shall be able to create and edit policies.
+
+FR-095: Policies shall support effective dates.
+
+FR-096: Policies shall support organizational scope.
+
+FR-097: Policies shall support priority or precedence rules.
+
+FR-098: Policies shall be evaluated before a booking is finalized.
+
+FR-099: Policy violations shall identify the relevant rule.
+
+FR-100: The system shall distinguish hard restrictions from warnings.
+
+FR-101: Hard restrictions shall prevent unauthorized booking unless
+        an explicitly permitted exception process exists.
+
+FR-102: Warning-level violations shall be displayed to the traveler
+        and relevant approver.
+
+FR-103: Policy exceptions shall require appropriate authorization.
+
+FR-104: Policy changes shall not silently rewrite historical decisions.
+
+FR-105: The system shall retain the applicable policy version with
+        the travel request or booking record.
+
+FR-106: The system shall support policy testing before publication.
+
+
+9.3 POLICY EXAMPLE
+
+Example:
+
+Rule:
+Hotel nightly rate must not exceed USD 220.
+
+Scope:
+Employees in the Sales department.
+
+Condition:
+Any hotel booking with a nightly rate above USD 220.
+
+Action:
+Flag as out of policy and route for approval.
+
+Exception:
+An authorized approver may approve the exception with a recorded reason.
+
+Audit:
+Record the policy version, rate, decision, approver, timestamp, and
+exception justification.
+
+
+======================================================================
+10. TRAVEL REQUEST AND APPROVAL WORKFLOW
+======================================================================
+
+10.1 TRAVEL REQUEST CREATION
+
+Employees shall be able to create a request containing:
+
+- Trip purpose.
+- Destination.
+- Departure date.
+- Return date.
+- Travelers.
+- Estimated travel budget.
+- Department.
+- Cost center.
+- Project code, if applicable.
+- Preferred travel arrangements.
+- Business justification.
+- Supporting documents.
+- Special requirements.
+
+FR-107: Users shall be able to save draft requests.
+
+FR-108: Users shall be able to submit requests for approval.
+
+FR-109: The system shall validate mandatory information.
+
+FR-110: The system shall evaluate applicable policies.
+
+FR-111: The system shall identify the required approval route.
+
+FR-112: The system shall notify assigned approvers.
+
+
+10.2 APPROVAL ENGINE
+
+The approval engine shall support:
+
+- Manager approval.
+- Department-head approval.
+- Finance approval.
+- Budget-owner approval.
+- Sequential approval.
+- Parallel approval.
+- Amount-based approval.
+- Department-based approval.
+- Country-based approval.
+- Policy-exception approval.
+- Delegated approval.
+- Escalation.
+- Configurable reminders.
+
+FR-113: Approval workflows shall be configurable.
+
+FR-114: Approval decisions shall be recorded.
+
+FR-115: Rejections shall include a reason.
+
+FR-116: Approvers shall be able to request additional information.
+
+FR-117: The system shall prevent unauthorized self-approval where
+        the applicable policy prohibits it.
+
+FR-118: Approval delegation shall be time-bound and auditable.
+
+FR-119: The system shall notify the next approver after a decision.
+
+FR-120: The system shall support configurable escalation rules.
+
+FR-121: Administrators shall be able to view approval history.
+
+FR-122: Approval actions shall include timestamps and actor identifiers.
+
+
+10.3 APPROVAL STATES
+
+Possible states:
+
+- DRAFT
+- SUBMITTED
+- PENDING_APPROVAL
+- ADDITIONAL_INFORMATION_REQUIRED
+- APPROVED
+- REJECTED
+- CANCELLED
+- EXPIRED
+
+The implementation shall define valid state transitions.
+
+An approved request does not automatically mean a travel supplier has
+confirmed a booking.
+
+
+======================================================================
+11. TRAVEL BOOKING AND CHECKOUT
+======================================================================
+
+11.1 BOOKING WORKFLOW
+
+The booking process shall include:
+
+1. Search inventory.
+2. Select an available option.
+3. Review itinerary or accommodation details.
+4. Validate traveler information.
+5. Evaluate travel policy.
+6. Obtain required approval.
+7. Revalidate price and availability.
+8. Select permitted payment method.
+9. Submit the booking request.
+10. Process the supplier response.
+11. Record the confirmed booking.
+12. Store supplier references.
+13. Generate or retrieve travel documents.
+14. Notify the traveler and relevant administrators.
+
+
+11.2 BOOKING REQUIREMENTS
+
+FR-123: The platform shall support bookings for authorized travelers.
+
+FR-124: The platform shall verify that required approval has been
+        obtained before committing a booking when policy requires it.
+
+FR-125: The platform shall revalidate availability before purchase.
+
+FR-126: The platform shall record the final accepted price.
+
+FR-127: The platform shall record supplier booking references.
+
+FR-128: The platform shall store the supplier's confirmation response.
+
+FR-129: The platform shall notify users of confirmed bookings.
+
+FR-130: The platform shall distinguish confirmed bookings from pending
+        or failed transactions.
+
+FR-131: The platform shall handle supplier timeouts.
+
+FR-132: The platform shall prevent duplicate bookings caused by
+        repeated requests where the supplier supports idempotency or
+        another reliable reconciliation mechanism.
+
+FR-133: The platform shall provide booking status visibility.
+
+FR-134: The platform shall retain a booking audit trail.
+
+FR-135: The platform shall associate bookings with organizations,
+        travelers, requests, cost centers, and payment records.
+
+
+11.3 BOOKING STATES
+
+The system shall support applicable states such as:
+
+- INITIATED
+- PENDING_APPROVAL
+- APPROVED
+- PAYMENT_PENDING
+- BOOKING_IN_PROGRESS
+- CONFIRMED
+- TICKET_PENDING
+- TICKETED
+- FAILED
+- CANCEL_REQUESTED
+- CANCELLED
+- CHANGE_REQUESTED
+- CHANGE_IN_PROGRESS
+- PARTIALLY_CANCELLED
+- REFUND_PENDING
+- REFUNDED
+- PARTIALLY_REFUNDED
+- UNKNOWN_SUPPLIER_STATUS
+
+The exact state model shall vary according to inventory type and supplier.
+
+An UNKNOWN_SUPPLIER_STATUS state must trigger reconciliation rather than
+an automatic assumption that the booking failed.
+
+
+11.4 PAYMENT REQUIREMENTS
+
+The platform shall support configured payment methods, including:
+
+- Organization-level payment instruments.
+- Supported corporate cards.
+- Individual payment methods where permitted.
+- Supplier-supported invoicing.
+- Approved credit arrangements.
+- Prepaid balances, if implemented and legally supported.
+
+FR-136: Payment authorization shall occur through the configured
+        payment provider.
+
+FR-137: The platform shall store payment references rather than raw
+        card credentials.
+
+FR-138: The platform shall record payment status.
+
+FR-139: The platform shall handle payment failures.
+
+FR-140: The platform shall reconcile payment status with booking status.
+
+FR-141: The platform shall support payment capture or settlement
+        according to the applicable payment model.
+
+FR-142: The platform shall support refunds where permitted by the
+        supplier and payment provider.
+
+FR-143: Payment amounts and currencies shall be recorded explicitly.
+
+FR-144: The platform shall record fees, taxes, and adjustments.
+
+FR-145: The platform shall not report a supplier refund as completed
+        until the relevant confirmation is received or verified.
+
+FR-146: Payment operations shall be auditable.
+
+
+======================================================================
+12. BOOKING MANAGEMENT AND TRIP MANAGEMENT
+======================================================================
+
+12.1 MY TRIPS
+
+Travelers shall have access to a centralized trip dashboard.
+
+The dashboard shall display:
+
+- Upcoming trips.
+- Current trips.
+- Completed trips.
+- Cancelled trips.
+- Pending travel requests.
+- Flight details.
+- Hotel details.
+- Car rental details.
+- Booking references.
+- Travel documents.
+- Trip expenses.
+- Relevant notifications.
+
+FR-147: Travelers shall be able to access their permitted bookings.
+
+FR-148: Travelers shall be able to filter trips by status and date.
+
+FR-149: Authorized administrators shall be able to access organizational
+        trip information.
+
+FR-150: Trip records shall group related bookings where appropriate.
+
+FR-151: The system shall provide an itinerary view.
+
+
+12.2 CANCELLATIONS
+
+FR-152: Users shall be able to initiate permitted cancellation requests.
+
+FR-153: The system shall retrieve or display applicable cancellation
+        conditions.
+
+FR-154: The system shall calculate or retrieve cancellation charges
+        where supported.
+
+FR-155: The system shall record cancellation requests.
+
+FR-156: The system shall update booking status only after a reliable
+        supplier response or verified reconciliation.
+
+FR-157: The system shall record refund status separately from
+        cancellation status.
+
+FR-158: Users shall be notified of cancellation outcomes.
+
+
+12.3 MODIFICATIONS
+
+Supported modifications may include:
+
+- Flight date changes.
+- Flight itinerary changes.
+- Passenger detail corrections where permitted.
+- Hotel date changes.
+- Hotel room changes where supported.
+- Rental car modifications.
+
+FR-159: The platform shall display change conditions.
+
+FR-160: The platform shall calculate or retrieve additional costs
+        where supported.
+
+FR-161: The platform shall require additional approval where the
+        changed itinerary violates company policy.
+
+FR-162: The platform shall record the original and updated booking
+        details.
+
+FR-163: The platform shall retain supplier references and change history.
+
+FR-164: Unsupported changes shall be routed to customer support or
+        the supplier.
+
+
+12.4 DISRUPTION MANAGEMENT
+
+Where supplier and data-provider capabilities permit, the system shall
+support:
+
+- Flight status monitoring.
+- Delay notifications.
+- Cancellation notifications.
+- Schedule-change notifications.
+- Rebooking assistance.
+- Affected traveler identification.
+- Support escalation.
+- Alternative itinerary suggestions.
+
+The platform shall not promise automatic rebooking unless the supplier
+integration explicitly supports it.
+
+FR-165: The system shall associate disruption events with affected
+        bookings.
+
+FR-166: The system shall notify affected users.
+
+FR-167: The system shall record disruption-related support activity.
+
+
+======================================================================
+13. EXPENSE MANAGEMENT
+======================================================================
+
+13.1 EXPENSE CREATION
+
+Employees shall be able to create expenses with:
+
+- Expense date.
+- Merchant.
+- Amount.
+- Currency.
+- Expense category.
+- Tax amount where applicable.
+- Business purpose.
+- Department.
+- Cost center.
+- Project.
+- Payment method.
+- Receipt.
+- Related trip.
+- Notes.
+- Supporting documentation.
+
+FR-168: Employees shall be able to create expenses manually.
+
+FR-169: Employees shall be able to upload receipts.
+
+FR-170: The platform shall support common image and document formats.
+
+FR-171: The system shall validate file size and type.
+
+FR-172: The system shall detect likely duplicate expenses.
+
+FR-173: The system shall allow expenses to be linked to trips.
+
+FR-174: The system shall allow draft expenses to be saved.
+
+
+13.2 RECEIPT OCR
+
+The platform should support OCR-assisted extraction of:
+
+- Merchant name.
+- Transaction date.
+- Total amount.
+- Currency.
+- Tax amount.
+- Receipt reference.
+- Payment method where available.
+
+FR-175: Extracted data shall be shown to the user for confirmation.
+
+FR-176: Low-confidence OCR results shall be flagged.
+
+FR-177: OCR shall not silently override verified user data.
+
+FR-178: Uploaded receipts shall be associated with the appropriate
+        expense record.
+
+FR-179: OCR processing failures shall be recoverable.
+
+
+13.3 EXPENSE CATEGORIES
+
+Administrators shall be able to configure categories such as:
+
+- Airfare.
+- Accommodation.
+- Ground transportation.
+- Meals.
+- Client entertainment.
+- Office expenses.
+- Communication.
+- Parking.
+- Fuel.
+- Other approved business expenses.
+
+Category rules may vary by organization.
+
+
+13.4 EXPENSE POLICY VALIDATION
+
+The platform shall validate:
+
+- Maximum permitted amount.
+- Receipt requirements.
+- Permitted expense categories.
+- Expense submission deadlines.
+- Duplicate claims.
+- Department restrictions.
+- Cost center requirements.
+- Required business justification.
+- Currency requirements.
+
+FR-180: The system shall identify expense policy violations.
+
+FR-181: The system shall distinguish warnings from hard restrictions.
+
+FR-182: Authorized reviewers shall be able to approve documented
+        exceptions.
+
+
+13.5 EXPENSE APPROVAL
+
+Expense workflow:
+
+Employee submission
+        |
+        v
+Validation
+        |
+        v
+Manager review
+        |
+        v
+Finance review, if required
+        |
+        v
+Approved expense
+        |
+        v
+Reimbursement or accounting export
+
+
+FR-183: Employees shall be able to submit expense reports.
+
+FR-184: Reviewers shall be able to approve or reject expenses.
+
+FR-185: Rejection shall include a reason.
+
+FR-186: Reviewers shall be able to request additional information.
+
+FR-187: Approved expenses shall be locked against unauthorized changes.
+
+FR-188: Authorized corrections shall preserve the audit history.
+
+FR-189: The platform shall record reimbursement status separately
+        from approval status.
+
+
+13.6 REIMBURSEMENTS
+
+Where reimbursement functionality is enabled:
+
+FR-190: The system shall calculate the approved reimbursement amount.
+
+FR-191: The system shall support reimbursement status tracking.
+
+FR-192: The system shall record payment references.
+
+FR-193: The system shall identify failed reimbursements.
+
+FR-194: The system shall support accounting exports.
+
+FR-195: The system shall not mark a reimbursement as paid without
+        a valid payment confirmation or authorized reconciliation.
+
+Actual fund transfers require a compatible payment provider or
+financial partner.
+
+
+======================================================================
+14. CORPORATE CARD AND TRANSACTION MANAGEMENT
+======================================================================
+
+14.1 CARD INTEGRATION
+
+The platform may integrate with authorized corporate card providers.
+
+Potential capabilities include:
+
+- Transaction imports.
+- Merchant information.
+- Transaction date.
+- Amount and currency.
+- Cardholder association.
+- Receipt matching.
+- Expense matching.
+- Transaction reconciliation.
+- Missing-receipt alerts.
+- Card-level spending information where provided.
+- Corporate card policy monitoring.
+
+FR-196: The system shall import supported card transactions.
+
+FR-197: The system shall map transactions to authorized employees.
+
+FR-198: The system shall identify unmatched transactions.
+
+FR-199: The system shall allow permitted manual matching.
+
+FR-200: The system shall identify potential duplicate imports.
+
+FR-201: The system shall record transaction import history.
+
+FR-202: The system shall reconcile imported transactions with expenses.
+
+FR-203: The system shall support corporate card reporting where
+        supported by the provider.
+
+Issuing cards, holding customer funds, or operating payment accounts
+is not assumed to be part of the core software implementation.
+
+
+======================================================================
+15. FINANCE AND SPEND MANAGEMENT
+======================================================================
+
+15.1 FINANCIAL OVERVIEW
+
+The finance dashboard shall provide authorized users with visibility
+into:
+
+- Total travel spending.
+- Spending by department.
+- Spending by cost center.
+- Spending by project.
+- Spending by traveler.
+- Spending by supplier.
+- Spending by category.
+- Spending by time period.
+- Approved and pending expenses.
+- Travel booking costs.
+- Refunds and credits.
+- Budget utilization.
+- Outstanding reimbursements.
+- Invoice status.
+
+
+15.2 BUDGET MANAGEMENT
+
+FR-204: Administrators shall be able to define budgets.
+
+FR-205: Budgets shall support department, project, cost center, or
+        other configured organizational scopes.
+
+FR-206: Budgets shall have defined periods.
+
+FR-207: The platform shall calculate budget utilization.
+
+FR-208: The system shall warn authorized users when configured
+        thresholds are reached.
+
+FR-209: The system shall support hard budget restrictions where
+        explicitly configured.
+
+FR-210: Budget calculations shall account for the organization's
+        configured treatment of cancellations, refunds, and pending
+        commitments.
+
+FR-211: The platform shall retain budget change history.
+
+
+15.3 INVOICE MANAGEMENT
+
+The platform shall support:
+
+- Supplier invoices.
+- Booking-related invoices.
+- Expense documentation.
+- Subscription invoices.
+- Invoice references.
+- Invoice dates.
+- Due dates.
+- Tax information.
+- Currency.
+- Payment status.
+- Invoice attachments.
+- Reconciliation status.
+
+FR-212: Authorized users shall be able to view and download available
+        invoices.
+
+FR-213: The system shall associate invoices with the relevant
+        organization or booking.
+
+FR-214: The system shall track invoice processing status.
+
+FR-215: The system shall support invoice exports.
+
+FR-216: The platform shall distinguish platform subscription invoices
+        from travel supplier invoices.
+
+
+======================================================================
+16. MULTI-CURRENCY AND INTERNATIONALIZATION
+======================================================================
+
+16.1 MULTI-CURRENCY
+
+The platform shall support:
+
+- Organization base currency.
+- Supplier transaction currency.
+- Expense transaction currency.
+- Reporting currency.
+- Currency conversion.
+- Exchange-rate timestamps.
+- Historical exchange-rate references.
+- Currency-aware financial exports.
+
+FR-217: Monetary values shall use precise decimal representations.
+
+FR-218: Currency shall be stored explicitly for each financial amount.
+
+FR-219: Conversion calculations shall retain the applicable rate and
+        conversion date.
+
+FR-220: The system shall distinguish original amounts from converted
+        reporting amounts.
+
+FR-221: Financial reports shall identify the reporting currency.
+
+
+16.2 INTERNATIONALIZATION
+
+The platform architecture shall support:
+
+- Multiple languages.
+- Locale-specific date formats.
+- Locale-specific number formats.
+- Local time zones.
+- International phone numbers.
+- Country-specific addresses.
+- Country-specific tax fields.
+- Local currency display.
+- Translated notification templates.
+- Country-specific legal content.
+
+FR-222: Users shall be able to select a supported interface language.
+
+FR-223: The platform shall store timestamps in a consistent canonical
+        format and display them in the applicable local time zone.
+
+FR-224: The platform shall handle daylight-saving-time changes.
+
+FR-225: The system shall not assume that every country follows the
+        same financial or tax rules.
+
+
+======================================================================
+17. NOTIFICATIONS AND COMMUNICATIONS
+======================================================================
+
+17.1 NOTIFICATION CHANNELS
+
+The platform shall support configurable notification delivery through:
+
+- Email.
+- In-app notifications.
+- Push notifications, if mobile applications are introduced.
+- SMS or messaging providers where commercially and legally justified.
+
+17.2 NOTIFICATION EVENTS
+
+Notifications may be triggered by:
+
+- Registration.
+- Email verification.
+- Employee invitation.
+- Password reset.
+- Travel request submission.
+- Approval request.
+- Approval decision.
+- Rejection.
+- Booking confirmation.
+- Ticket issuance.
+- Booking failure.
+- Booking modification.
+- Cancellation.
+- Refund status change.
+- Travel disruption.
+- Expense submission.
+- Expense approval.
+- Expense rejection.
+- Reimbursement update.
+- Subscription payment failure.
+- Integration failure.
+- Security-related events.
+
+FR-226: The platform shall provide configurable notification templates.
+
+FR-227: Notifications shall include relevant reference identifiers.
+
+FR-228: Notifications shall avoid exposing unnecessary sensitive data.
+
+FR-229: The system shall record notification delivery status where
+        supported by the provider.
+
+FR-230: Failed notifications shall be retried according to configured
+        rules.
+
+FR-231: Duplicate notifications shall be prevented where practical.
+
+FR-232: Users shall be able to manage non-essential notification
+        preferences.
+
+
+======================================================================
+18. SEARCH, DASHBOARDS AND REPORTING
+======================================================================
+
+18.1 EMPLOYEE DASHBOARD
+
+The employee dashboard shall provide:
+
+- Upcoming trips.
+- Pending requests.
+- Recent bookings.
+- Pending expenses.
+- Approval status.
+- Travel notifications.
+- Quick booking actions.
+- Profile completion reminders.
+
+
+18.2 ADMINISTRATOR DASHBOARD
+
+The organization dashboard shall provide:
+
+- Active employees.
+- Upcoming business trips.
+- Pending travel approvals.
+- Pending expense approvals.
+- Booking spending.
+- Policy violations.
+- Budget utilization.
+- Supplier breakdown.
+- Booking failures.
+- Upcoming subscription or billing events where applicable.
+
+
+18.3 REPORTING REQUIREMENTS
+
+FR-233: Users shall only access reports permitted by their roles.
+
+FR-234: Reports shall support configurable date ranges.
+
+FR-235: Reports shall support organizational filters.
+
+FR-236: Reports shall support export to CSV and other agreed formats.
+
+FR-237: The system shall identify report generation time.
+
+FR-238: Reports shall use consistent definitions of spending and status.
+
+FR-239: Historical records shall remain available according to retention
+        and contractual requirements.
+
+FR-240: Large reports shall be generated asynchronously where necessary.
+
+FR-241: The system shall notify users when asynchronous exports are ready.
+
+FR-242: Exported files shall be protected against unauthorized access.
+
+
+======================================================================
+19. SUPPLIER AND THIRD-PARTY INTEGRATIONS
+======================================================================
+
+19.1 INTEGRATION ARCHITECTURE
+
+The platform shall use an integration layer separating core product
+logic from individual supplier implementations.
+
+Each integration should implement standardized operations where
+supported:
+
+- Authentication.
+- Availability search.
+- Price validation.
+- Booking creation.
+- Booking retrieval.
+- Ticket retrieval.
+- Cancellation.
+- Modification.
+- Refund status.
+- Invoice retrieval.
+- Webhook processing.
+- Error mapping.
+- Reconciliation.
+
+Not all suppliers support every operation.
+
+
+19.2 TRAVEL INVENTORY PROVIDERS
+
+Potential provider categories include:
+
+- Global distribution systems.
+- Airline distribution APIs.
+- Hotel inventory aggregators.
+- Direct hotel connectivity providers.
+- Rental car inventory providers.
+- Rail distribution providers.
+- Travel management partners.
+
+The final provider selection must be based on:
+
+- Geographic coverage.
+- Inventory depth.
+- Commercial access.
+- API maturity.
+- Booking reliability.
+- Service and support arrangements.
+- Payment and settlement terms.
+- Commission structure.
+- Cancellation and refund support.
+- Corporate travel requirements.
+
+
+19.3 PAYMENT PROVIDERS
+
+Requirements:
+
+- Payment authorization.
+- Payment status.
+- Refund processing.
+- Webhook handling.
+- Transaction references.
+- Reconciliation.
+- Currency support.
+- Fraud controls where provided.
+
+The platform shall use an approved payment provider compatible with
+its operating countries and commercial model.
+
+
+19.4 ACCOUNTING INTEGRATIONS
+
+Potential integration categories:
+
+- Accounting software.
+- Enterprise resource planning systems.
+- Expense accounting platforms.
+- Payroll or reimbursement systems.
+
+The integration framework shall support:
+
+- Authentication.
+- Account mapping.
+- Cost center mapping.
+- Tax mapping.
+- Expense export.
+- Invoice export.
+- Payment reference export.
+- Error reporting.
+- Retry and reconciliation.
+
+
+19.5 HR AND IDENTITY INTEGRATIONS
+
+Potential capabilities:
+
+- Employee imports.
+- Department synchronization.
+- Manager relationships.
+- Employee onboarding.
+- Employee offboarding.
+- Identity provisioning.
+- Single sign-on.
+- Role mapping.
+
+FR-243: The system shall support configurable integration credentials.
+
+FR-244: Credentials shall be stored securely.
+
+FR-245: The system shall record synchronization status.
+
+FR-246: Failed synchronization jobs shall be retryable.
+
+FR-247: Duplicate imported records shall be handled according to
+        configurable matching rules.
+
+FR-248: Integration failures shall not silently delete valid customer
+        records.
+
+FR-249: The platform shall provide an integration status dashboard.
+
+FR-250: Administrators shall be able to disable an integration.
+
+FR-251: The platform shall validate incoming webhooks.
+
+FR-252: Webhook processing shall be idempotent where applicable.
+
+FR-253: Integration events shall be logged without unnecessarily
+        exposing sensitive information.
+
+
+======================================================================
+20. AI AND AUTOMATION
+======================================================================
+
+20.1 AI-ASSISTED TRAVEL PLANNING
+
+The platform may provide an assistant that accepts natural-language
+travel requests.
+
+Example:
+"Find a return flight from London to Singapore next month, with a
+maximum budget of GBP 900, and a hotel near the meeting venue."
+
+The assistant may:
+
+- Extract journey requirements.
+- Ask for missing information.
+- Search available inventory.
+- Summarize suitable options.
+- Explain policy compliance.
+- Identify relevant restrictions.
+- Prepare a draft itinerary.
+- Recommend options within budget.
+
+The AI assistant must use verified inventory and pricing services.
+It must not invent flights, prices, hotels, or booking availability.
+
+
+20.2 AI EXPENSE AUTOMATION
+
+Potential capabilities:
+
+- Receipt data extraction.
+- Expense categorization.
+- Duplicate detection.
+- Missing-receipt identification.
+- Policy violation detection.
+- Suggested accounting codes.
+- Anomaly identification.
+
+FR-254: AI-generated values shall be identifiable as suggestions.
+
+FR-255: The system shall permit authorized users to review and correct
+        AI-generated data.
+
+FR-256: AI shall not independently approve financial transactions
+        unless a specifically authorized deterministic policy allows it.
+
+FR-257: Material automated decisions shall be logged.
+
+FR-258: Sensitive customer data shall not be sent to an external AI
+        service without appropriate authorization and safeguards.
+
+FR-259: AI functionality shall fail safely when required data or
+        integrations are unavailable.
+
+
+20.3 AUTOMATION ENGINE
+
+The system should support event-triggered automation for:
+
+- Approval routing.
+- Approval reminders.
+- Policy alerts.
+- Receipt reminders.
+- Budget notifications.
+- Booking failure alerts.
+- Integration retries.
+- Expense export.
+- Employee offboarding.
+- Report scheduling.
+
+Automation rules shall be configurable and auditable.
+
+
+======================================================================
+21. CUSTOMER SUPPORT AND SERVICE OPERATIONS
+======================================================================
+
+21.1 SUPPORT TICKETS
+
+FR-260: Customers shall be able to create support requests.
+
+FR-261: Support requests shall have unique identifiers.
+
+FR-262: Requests shall support categories and priorities.
+
+FR-263: Requests may be linked to bookings, expenses, users, or
+        organizations.
+
+FR-264: Support agents shall be able to assign requests.
+
+FR-265: Support agents shall be able to record internal notes.
+
+FR-266: Customers shall be able to view permitted ticket updates.
+
+FR-267: The platform shall record status changes.
+
+FR-268: The system shall support escalation.
+
+FR-269: The platform shall provide support performance reporting.
+
+
+21.2 TRAVEL OPERATIONS
+
+Authorized operations agents shall be able to:
+
+- Investigate booking failures.
+- Review supplier responses.
+- Review booking references.
+- Initiate supported cancellation requests.
+- Initiate supported modification requests.
+- Investigate refund status.
+- Communicate with suppliers.
+- Record supplier case references.
+- Escalate unresolved supplier issues.
+
+Privileged operations actions must be recorded in the audit trail.
+
+
+======================================================================
+22. SUBSCRIPTION AND BILLING MANAGEMENT
+======================================================================
+
+22.1 COMMERCIAL MODEL
+
+The platform shall support configurable commercial models, including:
+
+- Per-user subscription.
+- Per-organization subscription.
+- Tiered subscription plans.
+- Usage-based charges.
+- Booking-related service fees.
+- Optional add-on modules.
+- Custom enterprise contracts.
+
+The exact model shall be finalized through commercial discovery.
+
+
+22.2 SUBSCRIPTION MANAGEMENT
+
+FR-270: Platform administrators shall be able to configure subscription
+        plans.
+
+FR-271: Authorized customer users shall be able to view their plan.
+
+FR-272: The system shall calculate applicable subscription charges.
+
+FR-273: The system shall generate subscription invoices.
+
+FR-274: The system shall track payment status.
+
+FR-275: The system shall support upgrades and downgrades according
+        to the agreed commercial rules.
+
+FR-276: The system shall support trial subscriptions if offered.
+
+FR-277: The system shall handle failed subscription payments.
+
+FR-278: The system shall support cancellation and renewal rules.
+
+FR-279: The system shall record plan and pricing changes.
+
+FR-280: Subscription status shall be distinct from travel booking
+        and supplier payment status.
+
+
+22.3 BILLING CONFIGURATION
+
+The system shall support:
+
+- Billing contacts.
+- Billing addresses.
+- Applicable tax details.
+- Invoice numbering.
+- Invoice currency.
+- Billing frequency.
+- Payment terms.
+- Credit arrangements where supported.
+- Discounts.
+- Credits and adjustments.
+- Tax documentation where required.
+
+Financial and tax calculations must be validated for each operating
+jurisdiction before launch.
+
+
+======================================================================
+23. PLATFORM ADMINISTRATION
+======================================================================
+
+23.1 ADMINISTRATIVE DASHBOARD
+
+The Voyentra internal administration portal shall provide:
+
+- Total organizations.
+- Active organizations.
+- Suspended organizations.
+- Active users.
+- Booking volumes.
+- Booking failure rates.
+- Supplier health.
+- Integration health.
+- Subscription revenue.
+- Outstanding payments.
+- Support ticket volumes.
+- Background job status.
+- Platform error rates.
+- Audit events.
+
+
+23.2 ORGANIZATION MANAGEMENT
+
+FR-281: Administrators shall be able to search organizations.
+
+FR-282: Administrators shall be able to view organization status.
+
+FR-283: Administrators shall be able to suspend organizations under
+        authorized circumstances.
+
+FR-284: Suspension shall follow defined access and data-retention rules.
+
+FR-285: Administrators shall be able to reactivate organizations.
+
+FR-286: Administrative access to customer records shall be permissioned
+        and auditable.
+
+FR-287: Organization deletion shall follow approved retention,
+        contractual, and legal requirements.
+
+
+23.3 CONFIGURATION MANAGEMENT
+
+Authorized administrators shall be able to manage:
+
+- Feature flags.
+- Supported countries.
+- Supported currencies.
+- Enabled travel categories.
+- Supplier configuration.
+- Subscription plans.
+- Notification templates.
+- System-level policy settings.
+- Integration settings.
+- Support permissions.
+- Operational limits.
+
+
+23.4 AUDIT LOGS
+
+The system shall record significant events, including:
+
+- Authentication changes.
+- Permission changes.
+- Employee creation and deletion.
+- Policy changes.
+- Approval decisions.
+- Booking actions.
+- Payment state changes.
+- Refund state changes.
+- Expense approval.
+- Reimbursement status changes.
+- Subscription changes.
+- Integration configuration.
+- Platform administrator actions.
+
+Audit logs shall be protected against unauthorized modification.
+
+Sensitive values, passwords, authentication tokens, and raw payment
+credentials must not be written to ordinary logs.
+
+
+======================================================================
+24. PUBLIC API AND DEVELOPER INFRASTRUCTURE
+======================================================================
+
+24.1 API REQUIREMENTS
+
+The platform shall expose selected functionality through secured APIs.
+
+Potential API resources:
+
+- Organizations.
+- Users.
+- Departments.
+- Cost centers.
+- Traveler profiles.
+- Travel requests.
+- Approvals.
+- Bookings.
+- Trips.
+- Expenses.
+- Receipts.
+- Reports.
+- Invoices.
+- Integrations.
+- Webhooks.
+
+FR-288: APIs shall require appropriate authentication.
+
+FR-289: APIs shall enforce tenant-level authorization.
+
+FR-290: APIs shall validate request data.
+
+FR-291: APIs shall return consistent error structures.
+
+FR-292: APIs shall support pagination where applicable.
+
+FR-293: APIs shall apply rate limits.
+
+FR-294: APIs shall document versioning rules.
+
+FR-295: Sensitive operations shall support idempotency where appropriate.
+
+FR-296: Webhook subscriptions shall be permissioned.
+
+FR-297: Webhook deliveries shall support retries.
+
+FR-298: API access shall be auditable.
+
+FR-299: API documentation shall describe authentication, resources,
+        parameters, responses, errors, and limitations.
+
+
+======================================================================
+25. FUTURE B2C TRAVEL PLATFORM
+======================================================================
+
+25.1 OBJECTIVE
+
+The architecture shall permit Heloix to launch a consumer travel
+booking experience without replacing the corporate platform.
+
+The B2C platform may include:
+
+- Public flight search.
+- Public hotel search.
+- Consumer accounts.
+- Traveler profiles.
+- Guest checkout where supported.
+- Personal bookings.
+- Booking history.
+- Consumer payment methods.
+- Promotional codes.
+- Consumer pricing rules.
+- Customer support.
+- Cancellation and modification requests.
+- Loyalty features.
+- Marketing campaigns.
+
+25.2 ARCHITECTURAL REQUIREMENTS
+
+FR-300: Corporate and consumer booking channels shall be logically
+        separated.
+
+FR-301: Corporate policy enforcement shall remain distinct from
+        consumer pricing and booking rules.
+
+FR-302: The system shall support channel-specific commercial rules.
+
+FR-303: The system shall support different payment configurations.
+
+FR-304: Customer data shall remain appropriately segregated.
+
+FR-305: The shared booking core shall support multiple sales channels.
+
+FR-306: Consumer features shall not compromise corporate tenant
+        isolation.
+
+FR-307: Public pricing shall be calculated according to the applicable
+        supplier agreements and commercial rules.
+
+The future B2C launch must be validated against supplier contract
+restrictions, distribution permissions, payment capabilities, and
+customer support requirements.
+
+
+======================================================================
+26. SYSTEM ARCHITECTURE REQUIREMENTS
+======================================================================
+
+26.1 ARCHITECTURAL PRINCIPLES
+
+The system shall be designed around:
+
+- Multi-tenancy.
+- Modular domain boundaries.
+- Secure authorization.
+- Integration abstraction.
+- Reliable transaction processing.
+- Auditable financial operations.
+- Configurable workflows.
+- Observability.
+- Extensibility.
+- Automated testing.
+- Operational resilience.
+
+
+26.2 RECOMMENDED HIGH-LEVEL ARCHITECTURE
+
+A. PRESENTATION LAYER
+
+Components:
+- Public marketing website.
+- Corporate web application.
+- Employee booking portal.
+- Administrator portal.
+- Platform operations portal.
+- Responsive mobile web interface.
+
+Potential technology:
+- React / Next.js or an equivalent framework.
+
+
+B. APPLICATION LAYER
+
+Recommended logical modules:
+- Authentication and identity.
+- Organization management.
+- User and traveler management.
+- Travel search.
+- Booking orchestration.
+- Travel policy engine.
+- Approval workflow engine.
+- Trip management.
+- Expense management.
+- Payment orchestration.
+- Subscription and billing.
+- Reporting.
+- Notifications.
+- Integrations.
+- Support.
+- Administration.
+
+Potential technology:
+- TypeScript with NestJS, Java with Spring Boot, Python with FastAPI,
+  or another maintainable backend stack.
+
+The final choice shall be based on engineering expertise, integration
+requirements, transaction complexity, and operational capability.
+
+
+C. DATA LAYER
+
+Core storage:
+- Relational database for transactional data.
+- Object storage for receipts and documents.
+- Cache for frequently accessed data.
+- Search index if required.
+- Analytical storage for advanced reporting where justified.
+
+A relational database such as PostgreSQL is a reasonable default for
+core transactional data.
+
+Sensitive data shall be encrypted and access-controlled.
+
+
+D. ASYNCHRONOUS PROCESSING
+
+Use background jobs or a message broker for:
+
+- Supplier webhooks.
+- Booking reconciliation.
+- Notifications.
+- Receipt OCR.
+- Expense exports.
+- Report generation.
+- Integration synchronization.
+- Retry processing.
+- Scheduled tasks.
+
+Potential technologies include a managed message queue or a broker
+such as RabbitMQ, depending on expected volume and operational needs.
+
+
+E. INTEGRATION LAYER
+
+Responsibilities:
+- Supplier-specific adapters.
+- Authentication.
+- Request normalization.
+- Response normalization.
+- Retry policies.
+- Rate limiting.
+- Idempotency.
+- Webhook verification.
+- Error mapping.
+- Supplier monitoring.
+
+
+F. INFRASTRUCTURE
+
+The deployment environment shall provide:
+
+- Managed application hosting.
+- Managed database services.
+- Object storage.
+- Secret management.
+- Monitoring.
+- Logging.
+- Alerting.
+- Automated deployment.
+- Backup and recovery.
+- Environment separation.
+- Network access controls.
+
+
+26.3 ARCHITECTURAL TRADE-OFF
+
+A modular monolith is a reasonable initial architecture if the
+engineering team is small and traffic is not yet established.
+
+A distributed microservices architecture should be introduced only
+where scaling, independent deployment, fault isolation, or organizational
+requirements justify its additional complexity.
+
+The system should preserve clear module boundaries so that individual
+components can be extracted later if necessary.
+
+
+======================================================================
+27. DATA MODEL REQUIREMENTS
+======================================================================
+
+The following entities represent the minimum logical data model.
+
+ORGANIZATION
+- id
+- legal_name
+- display_name
+- country
+- base_currency
+- time_zone
+- billing_status
+- subscription_id
+- created_at
+- updated_at
+
+USER
+- id
+- email
+- authentication_reference
+- account_status
+- created_at
+- last_login_at
+
+ORGANIZATION_MEMBERSHIP
+- id
+- organization_id
+- user_id
+- role
+- department_id
+- manager_id
+- status
+
+DEPARTMENT
+- id
+- organization_id
+- name
+- parent_department_id
+
+COST_CENTER
+- id
+- organization_id
+- code
+- name
+- budget_reference
+
+TRAVELER_PROFILE
+- id
+- organization_id
+- user_id
+- traveler_details_reference
+- preferences
+
+TRAVEL_POLICY
+- id
+- organization_id
+- name
+- version
+- scope
+- effective_from
+- effective_until
+- status
+
+TRAVEL_REQUEST
+- id
+- organization_id
+- traveler_id
+- destination
+- start_date
+- end_date
+- estimated_budget
+- currency
+- status
+
+APPROVAL
+- id
+- organization_id
+- request_type
+- request_id
+- approver_id
+- decision
+- reason
+- decided_at
+
+TRIP
+- id
+- organization_id
+- primary_traveler_id
+- start_date
+- end_date
+- status
+
+BOOKING
+- id
+- organization_id
+- trip_id
+- supplier_id
+- booking_type
+- supplier_reference
+- status
+- total_amount
+- currency
+- created_at
+
+BOOKING_ITEM
+- id
+- booking_id
+- item_type
+- supplier_item_reference
+- status
+- amount
+- currency
+
+PAYMENT
+- id
+- organization_id
+- booking_id
+- provider_reference
+- amount
+- currency
+- status
+- created_at
+
+REFUND
+- id
+- payment_id
+- supplier_reference
+- amount
+- currency
+- status
+
+EXPENSE
+- id
+- organization_id
+- employee_id
+- trip_id
+- merchant
+- amount
+- currency
+- category
+- expense_date
+- status
+
+RECEIPT
+- id
+- expense_id
+- object_storage_reference
+- file_type
+- processing_status
+
+EXPENSE_REPORT
+- id
+- organization_id
+- employee_id
+- reporting_period
+- total_amount
+- currency
+- status
+
+INVOICE
+- id
+- organization_id
+- supplier_reference
+- invoice_type
+- amount
+- currency
+- due_date
+- status
+
+BUDGET
+- id
+- organization_id
+- scope
+- scope_reference
+- amount
+- currency
+- period_start
+- period_end
+
+SUPPLIER
+- id
+- name
+- supplier_type
+- integration_status
+
+INTEGRATION_CONNECTION
+- id
+- organization_id
+- provider
+- connection_status
+- configuration_reference
+
+SUBSCRIPTION
+- id
+- organization_id
+- plan_id
+- status
+- start_date
+- renewal_date
+
+AUDIT_EVENT
+- id
+- organization_id
+- actor_id
+- action
+- entity_type
+- entity_id
+- timestamp
+- metadata_reference
+
+
+27.1 DATA MODEL RULES
+
+- Use stable identifiers for core records.
+- Use explicit organization ownership.
+- Enforce tenant isolation at the application and data-access layers.
+- Use foreign-key constraints where appropriate.
+- Store monetary amounts with explicit currency codes.
+- Preserve historical booking and financial records.
+- Version policy and workflow configurations.
+- Record state transitions for financial and booking operations.
+- Apply retention rules to sensitive personal data.
+- Avoid storing payment card credentials.
+- Use object storage for large files rather than database blobs by default.
+- Use immutable or append-only audit records where appropriate.
+
+
+======================================================================
+28. NON-FUNCTIONAL REQUIREMENTS
+======================================================================
+
+28.1 PERFORMANCE
+
+NFR-001: Standard authenticated pages should target a server response
+         time of under 500 ms at the 95th percentile, excluding external
+         supplier latency and large report generation.
+
+NFR-002: Standard dashboard views should target a visible usable
+         response within 2 seconds under agreed normal-load conditions.
+
+NFR-003: Search performance shall be measured separately for each
+         supplier integration.
+
+NFR-004: The platform shall display loading states for long-running
+         operations.
+
+NFR-005: Expensive reports shall support asynchronous generation.
+
+NFR-006: Performance targets shall be validated through load testing.
+
+
+28.2 AVAILABILITY
+
+NFR-007: The initial production availability target shall be 99.9%
+         monthly, excluding explicitly agreed maintenance and third-party
+         supplier outages.
+
+NFR-008: Critical services shall have health checks and monitoring.
+
+NFR-009: Supplier outages shall be isolated where practical.
+
+NFR-010: The platform shall define recovery objectives for critical data.
+
+NFR-011: Failed background tasks shall be observable and recoverable.
+
+
+28.3 SCALABILITY
+
+NFR-012: The architecture shall support horizontal application scaling.
+
+NFR-013: Background processing capacity shall be scalable independently.
+
+NFR-014: Database indexes shall be designed around expected query
+         patterns.
+
+NFR-015: The system shall support growth in organizations, users,
+         bookings, and documents without architectural replacement.
+
+NFR-016: Capacity targets shall be finalized using expected customer
+         numbers, booking volumes, and concurrency.
+
+
+28.4 SECURITY
+
+NFR-017: All production network communication shall use TLS.
+
+NFR-018: Sensitive stored information shall be encrypted at rest.
+
+NFR-019: Access control shall follow least-privilege principles.
+
+NFR-020: Administrative actions shall be auditable.
+
+NFR-021: The application shall defend against common web application
+         vulnerabilities.
+
+NFR-022: Secrets shall be stored in an approved secret-management system.
+
+NFR-023: Authentication endpoints shall be rate-limited.
+
+NFR-024: Sensitive information shall be masked in logs and interfaces.
+
+NFR-025: Security testing shall be performed before production launch.
+
+NFR-026: Dependency vulnerabilities shall be monitored.
+
+NFR-027: Privileged access shall require stronger controls than ordinary
+         employee access.
+
+
+28.5 PRIVACY
+
+NFR-028: The system shall collect only necessary personal information.
+
+NFR-029: Data processing shall follow applicable privacy laws.
+
+NFR-030: Data access shall be restricted according to role and purpose.
+
+NFR-031: Data export and deletion workflows shall be defined.
+
+NFR-032: Retention periods shall be configurable where appropriate.
+
+NFR-033: Data residency requirements shall be evaluated for target
+         jurisdictions.
+
+NFR-034: Cross-border data transfers shall be assessed before launch.
+
+
+28.6 ACCESSIBILITY
+
+NFR-035: The user interface should target WCAG 2.2 AA accessibility.
+
+NFR-036: Interactive elements shall support keyboard navigation.
+
+NFR-037: Forms shall provide clear labels and validation messages.
+
+NFR-038: Color shall not be the sole indicator of status.
+
+NFR-039: Important workflows shall support assistive technologies.
+
+
+28.7 RESPONSIVENESS
+
+NFR-040: Public pages shall support desktop, tablet, and mobile layouts.
+
+NFR-041: Core employee workflows shall be usable on mobile browsers.
+
+NFR-042: Booking, approval, and expense interfaces shall adapt to
+         different screen sizes.
+
+NFR-043: The platform shall support current agreed browser versions.
+
+
+28.8 MAINTAINABILITY
+
+NFR-044: The codebase shall follow agreed coding standards.
+
+NFR-045: Core modules shall have documented interfaces.
+
+NFR-046: Critical business logic shall have automated tests.
+
+NFR-047: Production configuration shall be environment-specific.
+
+NFR-048: Database migrations shall be version-controlled.
+
+NFR-049: Deployment procedures shall be documented.
+
+NFR-050: System architecture and integration contracts shall be
+         documented.
+
+
+======================================================================
+29. DATA PROTECTION AND COMPLIANCE
+======================================================================
+
+29.1 GENERAL REQUIREMENTS
+
+The platform may process:
+
+- Personal identification information.
+- Passport and travel information.
+- Employee information.
+- Expense receipts.
+- Financial records.
+- Payment references.
+- Business travel itineraries.
+- Customer support communications.
+
+These records must be handled according to applicable legal and
+contractual requirements.
+
+
+29.2 COMPLIANCE AREAS
+
+The following require assessment based on operating geography:
+
+- GDPR and UK GDPR, where applicable.
+- Applicable national privacy laws.
+- Payment card industry requirements where applicable.
+- Applicable consumer protection rules.
+- Tax and invoicing regulations.
+- Travel seller and agency regulations.
+- Airline and travel distribution agreements.
+- Electronic communication consent rules.
+- Employment-related data requirements.
+
+The platform must not claim certification or regulatory approval until
+the relevant requirements have been independently verified.
+
+Payment architecture should minimize the platform's exposure to raw
+payment card data.
+
+
+======================================================================
+30. LOGGING, MONITORING AND OBSERVABILITY
+======================================================================
+
+The platform shall provide centralized observability.
+
+Required capabilities:
+
+- Application logs.
+- API error logs.
+- Supplier response metrics.
+- Booking failure metrics.
+- Payment failure metrics.
+- Background job monitoring.
+- Queue depth monitoring.
+- Database health monitoring.
+- Authentication anomaly monitoring.
+- Integration health monitoring.
+- Alerting.
+- Request correlation identifiers.
+- Audit logging.
+
+FR-301: Operational logs shall identify the affected service and
+        correlation identifier.
+
+FR-302: Logs shall not expose passwords, tokens, or raw payment
+        credentials.
+
+FR-303: Critical failures shall generate alerts.
+
+FR-304: Monitoring shall distinguish internal application failures
+        from external supplier failures.
+
+FR-305: Authorized operators shall be able to investigate a failed
+        booking using its internal identifier and supplier references.
+
+FR-306: The system shall monitor stale or unresolved booking states.
+
+FR-307: Monitoring configuration shall be version-controlled where
+        practical.
+
+
+======================================================================
+31. BACKUP AND DISASTER RECOVERY
+======================================================================
+
+31.1 BACKUP REQUIREMENTS
+
+The system shall support:
+
+- Automated database backups.
+- Point-in-time recovery where supported.
+- Object storage protection.
+- Backup access controls.
+- Backup retention.
+- Restore testing.
+- Documented recovery procedures.
+
+31.2 INITIAL RECOVERY TARGETS
+
+Proposed targets, subject to infrastructure cost and business approval:
+
+- Recovery Point Objective (RPO): 15 minutes for critical transactional
+  data, where the selected architecture supports it.
+
+- Recovery Time Objective (RTO): 4 hours for critical production
+  services.
+
+These are targets, not guaranteed outcomes. They must be validated
+through implementation and recovery testing.
+
+31.3 RECOVERY REQUIREMENTS
+
+FR-308: The team shall document recovery procedures.
+
+FR-309: Backups shall be protected from unauthorized deletion.
+
+FR-310: Recovery testing shall be performed before production launch
+        and periodically thereafter.
+
+FR-311: Recovery procedures shall include supplier integration
+        reconciliation.
+
+FR-312: Recovered booking and payment records shall be reconciled with
+        external providers where necessary.
+
+
+======================================================================
+32. TESTING AND QUALITY ASSURANCE
+======================================================================
+
+32.1 UNIT TESTING
+
+Unit tests shall cover:
+
+- Travel policy evaluation.
+- Approval routing.
+- Price calculations.
+- Currency conversions.
+- Expense validation.
+- Permission checks.
+- Booking state transitions.
+- Payment state transitions.
+- Subscription calculations.
+- Data validation.
+
+
+32.2 INTEGRATION TESTING
+
+Integration tests shall cover:
+
+- Authentication.
+- Database persistence.
+- Supplier adapters.
+- Payment providers.
+- Notification services.
+- Accounting integrations.
+- HR synchronization.
+- Webhook processing.
+- Object storage.
+- OCR services.
+
+
+32.3 END-TO-END TESTING
+
+Required scenarios include:
+
+E2E-01:
+An organization registers and completes onboarding.
+
+E2E-02:
+An administrator invites an employee.
+
+E2E-03:
+An employee submits a travel request.
+
+E2E-04:
+An approver approves the request.
+
+E2E-05:
+The employee searches and books supported travel inventory.
+
+E2E-06:
+The system handles a supplier price change.
+
+E2E-07:
+A supplier timeout triggers booking reconciliation.
+
+E2E-08:
+A confirmed booking appears in the employee's trip dashboard.
+
+E2E-09:
+An employee submits an expense with a receipt.
+
+E2E-10:
+A manager approves the expense.
+
+E2E-11:
+Finance exports the expense to an accounting system.
+
+E2E-12:
+A booking cancellation is processed and its refund is tracked.
+
+E2E-13:
+An administrator modifies a travel policy.
+
+E2E-14:
+A user attempts to access another organization's data.
+
+E2E-15:
+A platform administrator suspends and reactivates an organization.
+
+E2E-16:
+A subscription payment fails.
+
+E2E-17:
+An integration is disconnected and subsequently restored.
+
+E2E-18:
+A user account is disabled and loses access.
+
+
+32.4 PERFORMANCE TESTING
+
+Testing shall cover:
+
+- Concurrent logins.
+- Dashboard loading.
+- Travel search requests.
+- Approval queue processing.
+- Expense submission.
+- Report generation.
+- Webhook bursts.
+- Background queue processing.
+- Large employee imports.
+
+32.5 SECURITY TESTING
+
+Testing shall cover:
+
+- Tenant isolation.
+- Role escalation.
+- Unauthorized data access.
+- Session management.
+- Injection vulnerabilities.
+- Cross-site scripting.
+- Cross-site request forgery where relevant.
+- File upload validation.
+- API authentication.
+- Webhook authenticity.
+- Rate limiting.
+- Secret exposure.
+- Audit log integrity.
+
+
+======================================================================
+33. USER INTERFACE AND DESIGN REQUIREMENTS
+======================================================================
+
+33.1 DESIGN PRINCIPLES
+
+The Voyentra interface shall prioritize:
+
+- Clear navigation.
+- Minimal operational friction.
+- Fast access to travel search.
+- Transparent pricing.
+- Clear policy warnings.
+- Simple approval actions.
+- Consistent status indicators.
+- Accessible forms.
+- Responsive layouts.
+- Predictable workflows.
+- Strong information hierarchy.
+- Consistent design components.
+
+
+33.2 PRIMARY APPLICATION NAVIGATION
+
+Suggested corporate application navigation:
+
+- Home
+- Book Travel
+- My Trips
+- Travel Requests
+- Approvals
+- Expenses
+- Reports
+- People
+- Policies
+- Integrations
+- Settings
+
+Navigation shall be role-sensitive.
+
+Employees shall not see administrative functions they cannot access.
+
+
+33.3 BOOKING INTERFACE
+
+The booking interface should contain:
+
+- Search form.
+- Search results.
+- Filters.
+- Sort controls.
+- Fare or room detail view.
+- Policy compliance indicator.
+- Booking summary.
+- Traveler information.
+- Payment selection.
+- Confirmation state.
+
+The interface shall not display false availability or outdated prices
+as confirmed offers.
+
+
+33.4 DASHBOARD DESIGN
+
+Dashboards shall prioritize actionable information.
+
+Examples:
+
+- Requests requiring approval.
+- Upcoming trips.
+- Expenses requiring review.
+- Policy exceptions.
+- Booking failures.
+- Budget threshold alerts.
+
+Charts shall be supported by clearly defined underlying metrics.
+
+
+33.5 DESIGN SYSTEM
+
+The implementation shall establish a reusable design system containing:
+
+- Color tokens.
+- Typography.
+- Spacing.
+- Buttons.
+- Forms.
+- Tables.
+- Filters.
+- Navigation.
+- Modal dialogs.
+- Notifications.
+- Status indicators.
+- Charts.
+- Loading states.
+- Error states.
+- Empty states.
+- Responsive breakpoints.
+
+The design must use Voyentra branding rather than reproducing Perk's
+proprietary visual identity.
+
+
+======================================================================
+34. KEY BUSINESS WORKFLOWS
+======================================================================
+
+34.1 CORPORATE CUSTOMER ONBOARDING
+
+Visitor
+  -> Registration
+  -> Email verification
+  -> Organization creation
+  -> Company details
+  -> Initial administrator
+  -> Employee invitations
+  -> Policy configuration
+  -> Approval configuration
+  -> Billing setup, where required
+  -> Organization activated
+
+
+34.2 CORPORATE TRAVEL BOOKING
+
+Employee
+  -> Travel request
+  -> Policy validation
+  -> Approval, if required
+  -> Search available inventory
+  -> Select travel option
+  -> Price revalidation
+  -> Booking submission
+  -> Payment processing
+  -> Supplier confirmation
+  -> Ticket or reservation retrieval
+  -> Itinerary creation
+  -> Notification
+  -> Booking reconciliation
+
+
+34.3 EXPENSE MANAGEMENT
+
+Employee
+  -> Create expense
+  -> Upload receipt
+  -> OCR extraction, if enabled
+  -> Review extracted information
+  -> Validate policy
+  -> Submit expense
+  -> Manager approval
+  -> Finance approval, if required
+  -> Reimbursement or accounting export
+  -> Reconciliation
+  -> Closure
+
+
+34.4 CANCELLATION AND REFUND
+
+Traveler or authorized agent
+  -> Open booking
+  -> Review cancellation conditions
+  -> Submit cancellation request
+  -> Obtain approval, if required
+  -> Send request to supplier
+  -> Receive supplier response
+  -> Update cancellation status
+  -> Track refund separately
+  -> Reconcile payment provider
+  -> Notify traveler
+  -> Close the case
+
+
+34.5 ORGANIZATION OFFBOARDING
+
+Organization administrator
+  -> Request employee deactivation
+  -> Revoke sessions and access
+  -> Disable account
+  -> Preserve required historical records
+  -> Remove or revoke integration permissions
+  -> Apply retention rules
+  -> Record the action
+
+Historical financial and travel records must not be deleted merely
+because an employee account is deactivated.
+
+
+======================================================================
+35. ACCEPTANCE CRITERIA
+======================================================================
+
+The product shall be considered functionally ready for a production
+launch only when the agreed release scope satisfies the following.
+
+AC-01: The platform supports organization registration and onboarding.
+
+AC-02: Tenant data isolation has passed security testing.
+
+AC-03: User roles and permissions work as specified.
+
+AC-04: Administrators can configure travel policies.
+
+AC-05: Travel requests follow the configured approval workflow.
+
+AC-06: The system can search at least one commercially approved,
+       production-ready travel inventory source for each travel
+       category included in the launch scope.
+
+AC-07: Supported travel bookings can be completed and confirmed.
+
+AC-08: Booking failures and uncertain supplier responses can be
+       reconciled without blindly creating duplicate bookings.
+
+AC-09: Confirmed bookings are visible to authorized users.
+
+AC-10: Supported cancellations and modifications are processed
+       according to supplier capabilities.
+
+AC-11: Payment and refund statuses are recorded accurately.
+
+AC-12: Employees can submit expenses and receipts.
+
+AC-13: Expense approval works according to configured rules.
+
+AC-14: Authorized users can generate and export agreed reports.
+
+AC-15: Supported accounting integrations can transfer the agreed
+       financial data.
+
+AC-16: Administrators can manage users, policies, and integrations.
+
+AC-17: Critical security testing has been completed.
+
+AC-18: Backup restoration has been tested.
+
+AC-19: Monitoring and critical operational alerts are enabled.
+
+AC-20: The public marketing website works across supported devices.
+
+AC-21: Terms, privacy notices, and applicable legal documentation
+       have been reviewed for the launch jurisdictions.
+
+AC-22: Production deployment, rollback, and support procedures are
+       documented.
+
+AC-23: The customer-facing interface uses Voyentra branding.
+
+AC-24: The agreed performance and availability targets have been
+       validated.
+
+AC-25: No unresolved critical-severity defects remain at launch.
+
+
+======================================================================
+36. KEY RISKS AND DEPENDENCIES
+======================================================================
+
+RISK-01: TRAVEL INVENTORY ACCESS
+
+Description:
+Travel booking functionality depends on access to suitable suppliers.
+
+Impact:
+Without usable inventory APIs and commercial agreements, the platform
+cannot deliver a complete live-booking experience.
+
+Mitigation:
+Select and validate suppliers before committing to the full booking
+implementation.
+
+
+RISK-02: BOOKING RELIABILITY
+
+Description:
+Supplier timeouts, duplicate requests, and asynchronous confirmations
+can result in uncertain booking states.
+
+Impact:
+Potential duplicate reservations, financial discrepancies, and
+customer support incidents.
+
+Mitigation:
+Implement idempotency, reconciliation, state management, and supplier
+reference tracking.
+
+
+RISK-03: PAYMENT COMPLEXITY
+
+Description:
+Payment authorization, supplier settlement, refunds, and currencies
+vary across providers and jurisdictions.
+
+Impact:
+Financial loss, failed bookings, and reconciliation problems.
+
+Mitigation:
+Choose a suitable payment model and provider before finalizing
+transaction architecture.
+
+
+RISK-04: REFUND AND CANCELLATION HANDLING
+
+Description:
+Supplier cancellation and refund processes are not always synchronous.
+
+Impact:
+Inaccurate booking status and incorrect customer expectations.
+
+Mitigation:
+Track cancellation and refund as separate workflows.
+
+
+RISK-05: SCOPE EXPANSION
+
+Description:
+Travel booking, expenses, card management, accounting, AI, and B2C
+represent several substantial product domains.
+
+Impact:
+Cost overruns, delayed delivery, and unstable software.
+
+Mitigation:
+Prioritize product capabilities according to business value and
+technical dependencies.
+
+
+RISK-06: INTERNATIONAL COMPLIANCE
+
+Description:
+The platform may process employee, passport, financial, and travel data
+across jurisdictions.
+
+Impact:
+Regulatory exposure and contractual restrictions.
+
+Mitigation:
+Complete privacy, legal, and data-residency assessments before
+operating in each target market.
+
+
+RISK-07: CORPORATE CARD DEPENDENCIES
+
+Description:
+Card issuing and transaction access require appropriate providers.
+
+Impact:
+Card functionality cannot be delivered solely through application
+development.
+
+Mitigation:
+Integrate authorized financial providers and clearly separate
+transaction tracking from actual money movement.
+
+
+RISK-08: SUPPORT OPERATIONS
+
+Description:
+Travel changes and disruptions may require timely human intervention.
+
+Impact:
+High support costs and customer dissatisfaction.
+
+Mitigation:
+Define supplier support arrangements, escalation procedures, staffing,
+and service-level commitments.
+
+
+RISK-09: PRICING AND UNIT ECONOMICS
+
+Description:
+Supplier fees, support costs, payment charges, and transaction margins
+may vary significantly.
+
+Impact:
+A high-volume business may still be unprofitable.
+
+Mitigation:
+Model contribution margin by booking type, geography, customer segment,
+and subscription plan before finalizing commercial pricing.
+
+
+RISK-10: PRODUCT PARITY
+
+Description:
+A broad feature checklist does not guarantee equivalent operational
+quality to an established platform.
+
+Impact:
+The platform may look complete while failing under real booking,
+refund, reconciliation, or support scenarios.
+
+Mitigation:
+Prioritize end-to-end reliability and operational readiness, not just
+the number of implemented screens.
+
+
+======================================================================
+37. IMPORTANT PRODUCT DECISIONS STILL REQUIRED
+======================================================================
+
+The following decisions must be finalized before technical estimation
+and implementation commitments.
+
+D-01: INITIAL TARGET COUNTRIES
+
+Which countries will be supported at launch?
+
+This determines payment providers, tax handling, privacy requirements,
+travel inventory, currency support, and localization.
+
+
+D-02: INITIAL CUSTOMER SEGMENT
+
+Will the initial customers be:
+
+- Small and medium businesses?
+- Mid-market organizations?
+- Large enterprises?
+- Travel management companies?
+- A combination of these segments?
+
+
+D-03: TRAVEL INVENTORY STRATEGY
+
+Will Heloix use:
+
+- One primary travel inventory provider?
+- Multiple travel suppliers?
+- A third-party travel management partner?
+- Direct supplier connections?
+- A hybrid model?
+
+
+D-04: CORPORATE BOOKING MODEL
+
+Will the platform provide:
+
+- Self-service booking?
+- Booking after approval?
+- Agent-assisted booking?
+- Supplier-invoiced bookings?
+- Centralized corporate payment?
+- A combination of these options?
+
+
+D-05: PAYMENT AND SETTLEMENT MODEL
+
+Will the platform act as:
+
+- A software layer with suppliers charging customers directly?
+- A booking intermediary using a payment provider?
+- A managed travel service with negotiated commercial arrangements?
+- A combination, depending on supplier and market?
+
+
+D-06: EXPENSE MANAGEMENT DEPTH
+
+Will the initial product include:
+
+- Expense capture only?
+- Expense approvals?
+- Reimbursement tracking?
+- Accounting exports?
+- Corporate card integrations?
+- Corporate card issuance through partners?
+
+
+D-07: SUBSCRIPTION MODEL
+
+Will revenue come from:
+
+- SaaS subscriptions?
+- Per-booking fees?
+- Supplier commissions?
+- Enterprise contracts?
+- Optional add-ons?
+- A combination of these?
+
+
+D-08: CUSTOMER BILLING
+
+Will Heloix invoice organizations monthly, annually, per transaction,
+or through custom enterprise contracts?
+
+
+D-09: INTEGRATION PRIORITIES
+
+Which accounting, HR, identity, payment, and travel providers must be
+supported at launch?
+
+
+D-10: MOBILE STRATEGY
+
+Will Heloix launch with:
+
+- Responsive web only?
+- Progressive web application?
+- Native iOS and Android applications?
+
+
+D-11: FUTURE B2C STRATEGY
+
+Will B2C use the same travel inventory and booking infrastructure?
+Will consumer payments, customer accounts, and pricing be managed
+through separate commercial rules?
+
+
+D-12: INITIAL CUSTOMER VOLUME
+
+Expected values are required for:
+
+- Organizations at launch.
+- Employees per organization.
+- Monthly searches.
+- Monthly bookings.
+- Monthly expenses.
+- Peak concurrent users.
+- Expected geographic expansion.
+
+
+D-13: SERVICE AND SUPPORT MODEL
+
+Will customer support be handled internally, through suppliers, or
+through a combination of automated and human support?
+
+
+D-14: AI STRATEGY
+
+Which AI capabilities justify their cost and operational risk at launch?
+
+Potential candidates:
+- Receipt OCR.
+- Expense categorization.
+- Policy violation detection.
+- Travel itinerary assistance.
+- Support ticket classification.
+
+
+D-15: DATA RESIDENCY
+
+Must customer data remain in specific countries or regions?
+
+This affects hosting, storage, disaster recovery, and vendor selection.
+
+
+======================================================================
+38. FINAL PRODUCT DEFINITION
+======================================================================
+
+Voyentra shall be designed as a modular, multi-tenant corporate travel,
+expense, and spend management platform.
+
+The product shall combine:
+
+1. A corporate marketing website.
+2. A secure organization and employee management system.
+3. A travel inventory search and booking engine.
+4. A corporate travel policy engine.
+5. A configurable approval workflow engine.
+6. A trip and booking management system.
+7. An expense management system.
+8. Financial reporting and reconciliation.
+9. Supplier and payment integrations.
+10. Subscription and billing management.
+11. Customer support and travel operations.
+12. Platform administration.
+13. Analytics and automation.
+14. A future-compatible B2C booking architecture.
+
+The platform must prioritize:
+
+- Booking reliability.
+- Tenant isolation.
+- Accurate financial records.
+- Clear approval workflows.
+- Policy enforcement.
+- Supplier integration quality.
+- Operational visibility.
+- Data security.
+- International extensibility.
+- Sustainable unit economics.
+
+The architecture shall permit additional travel suppliers, integrations,
+countries, customer segments, and consumer booking channels to be added
+without replacing the core platform.
+
+
+======================================================================
+39. DEFINITION OF DONE
+======================================================================
+
+The complete product shall be considered ready for its agreed production
+release when:
+
+- The approved functional scope has been implemented.
+- Critical end-to-end workflows pass testing.
+- Supplier integrations are operational.
+- Booking and payment reconciliation is verified.
+- Tenant isolation and access controls have been tested.
+- Security and privacy requirements have been addressed.
+- Production monitoring and alerting are active.
+- Backup and recovery procedures are validated.
+- Customer support and operational procedures are documented.
+- Legal and commercial dependencies have been resolved.
+- The production environment has been tested under expected load.
+- Documentation and training materials are available.
+- No unresolved critical defects remain.
+- Product ownership and operational responsibility have been assigned.
+
+END OF DOCUMENT
